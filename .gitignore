@@ -1,0 +1,5 @@
+#Node modules libraries
+node_modules/
+
+#project distributable 
+dist/
