@@ -15,16 +15,17 @@ const AppHeader = () => (
       celled
       style={{
         background: 'linear-gradient(to top right, #232526 , #414345)',
+        boxShadow: " 0px 3px 9px -4px rgba(61,60,61,0.8)"
       }}
     >
       <Grid.Column>
-        <Menu secondary inverted size="large">
+        <Menu secondary inverted size="large" stackable>
           <Menu.Item header>
-            <SUI_Header as="h2" color="blue">
+            <SUI_Header as="h3" color="blue">
               <Icon name="settings" />
               <SUI_Header.Content>
                 Employee Presence
-                <SUI_Header.Subheader style={{ color: 'white' }}>
+                <SUI_Header.Subheader style={{ color: 'lightgrey' }}>
                   Leave & Overtime Tracker
                 </SUI_Header.Subheader>
               </SUI_Header.Content>

@@ -26,8 +26,6 @@ class App extends Component {
 
   render() {
     const options = {
-      sectionClassName: 'section',
-      anchors: ['overtime', 'leave', 'statistics'],
       scrollBar: false,
       navigation: false,
       verticalAlign: true,
@@ -37,13 +35,15 @@ class App extends Component {
     };
 
     return (
-      <div>
+      <div style={{ background: "#FAFAFA" }}>
         <AppHeader />
         <ScrollToTopOnMount />
         <SectionsContainer className="container" {...options}>
-          <Section color="grey">
+          <Section >
             <Segment basic padded style={{ height: '100%' }}>
-              OVERTIME
+              <Segment style={{ height: '100%' }}>
+
+              </Segment>
             </Segment>
           </Section>
 
