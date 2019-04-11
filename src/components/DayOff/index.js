@@ -8,7 +8,9 @@ const LeaveContainer = () => {
   return (
     <Grid>
       <Grid.Column>
-        <DayOffCalendar />
+        <Segment>
+          <DayOffCalendar />
+        </Segment>
       </Grid.Column>
     </Grid>
   );

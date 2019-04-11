@@ -26,6 +26,7 @@ import SignoutContainer from './SignoutContainer';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.myDiv = React.createRef();
     this.state = { activeMenuItem: 'home', isLoggedIn: true };
   }
 
@@ -64,9 +65,9 @@ class App extends Component {
             handleMenuItemClick={this.handleMenuItemClick}
             activeMenuItem={activeMenuItem}
           />
-          <Container fluid style={{ height: '88%' }}>
-            <Segment basic padded style={{ height: '100%' }}>
-              <Segment style={{ height: '100%', overflowX: 'auto' }} raised>
+          <Container fluid style={{ height: '88%', overflowY: 'auto' }}>
+            <Segment basic padded style={{}}>
+              <Segment style={{}} basic>
                 <Switch>
                   <Route exact path="/" component={HomeContainer} />
                   <Route path="/overtime" component={Overtime} />
