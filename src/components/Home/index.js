@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { Grid, Segment } from 'semantic-ui-react';
 
-// import DayOffCalendar from './DayOffCalendar';
+import CalendarView from './CalendarView';
 
 class DayOff extends Component {
   constructor() {
@@ -14,7 +14,9 @@ class DayOff extends Component {
     return (
       <Grid>
         <Grid.Column>
-          <h1>DAY OFF COMPONENT</h1>
+          <Segment>
+            <CalendarView />
+          </Segment>
         </Grid.Column>
       </Grid>
     );

@@ -1,9 +1,9 @@
 import React from 'react';
 
-const OvertimeContainer = () => {
+const Overtime = () => {
   console.log('OVERTIME COMPONENT');
 
   return <h1>OVERTIME CONTAINER</h1>;
 };
 
-export default OvertimeContainer;
+export default Overtime;

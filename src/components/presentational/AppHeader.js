@@ -74,18 +74,6 @@ const AppHeader = props => {
               />
               Day Off
             </Menu.Item>
-            <Menu.Item
-              id="statistics"
-              color="blue"
-              style={{ color: 'white' }}
-              active={props.activeMenuItem === 'statistics'}
-              onClick={e => props.handleMenuItemClick(e)}
-              as={Link}
-              to="/statistics"
-            >
-              <Icon name="chart line" style={{ pointerEvents: 'none' }} />
-              Statistics
-            </Menu.Item>
             <Menu.Item />
             <Menu.Item
               id="signout"

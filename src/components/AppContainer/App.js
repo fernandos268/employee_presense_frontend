@@ -15,10 +15,9 @@ import { Segment, Container } from 'semantic-ui-react';
 import AppHeader from '../presentational/AppHeader';
 
 // CONTAINER COMPONENTS
-import HomeContainer from './HomeContainer';
+import Home from '../Home';
 import Overtime from '../Overtime';
 import DayOff from '../DayOff';
-import StatisticsContainer from './StatisticsContainer';
 import SignoutContainer from './SignoutContainer';
 
 // PRESENTATIONAL COMPONENT
@@ -27,7 +26,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.myDiv = React.createRef();
-    this.state = { activeMenuItem: 'home', isLoggedIn: true };
+    this.state = {
+      activeMenuItem: 'home',
+      isLoggedIn: true,
+      isModalVisible: false,
+    };
   }
 
   FetchGithubUsers = () => {
@@ -69,10 +72,9 @@ class App extends Component {
             <Segment basic padded style={{}}>
               <Segment style={{}} basic>
                 <Switch>
-                  <Route exact path="/" component={HomeContainer} />
+                  <Route exact path="/" component={Home} />
                   <Route path="/overtime" component={Overtime} />
                   <Route path="/dayoff" component={DayOff} />
-                  <Route path="/statistics" component={StatisticsContainer} />
                   <Route path="/signout" component={SignoutContainer} />
                   <Route render={() => <h1>Page Not Found</h1>} />
                 </Switch>

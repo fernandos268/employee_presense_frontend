@@ -9,6 +9,7 @@ module.exports = {
   output: {
     filename: '[name].[hash].js',
     path: path.resolve('./dist'),
+    publicPath: '/',
   },
   devtool: 'inline-source-map',
   module: {
@@ -49,8 +50,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
-    host: 'localhost',
-    port: 9090,
+    port: 9000,
     open: true,
     hot: true,
   },
