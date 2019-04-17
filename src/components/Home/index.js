@@ -14,7 +14,7 @@ class DayOff extends Component {
     return (
       <Grid>
         <Grid.Column>
-          <Segment>
+          <Segment raised>
             <CalendarView />
           </Segment>
         </Grid.Column>

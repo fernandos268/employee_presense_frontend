@@ -1,0 +1,658 @@
+1. installed webpack , webpack-dev-server  : this is for bundling the code base.
+2. installed babel (@babel/core | @babel/cli | @babel/preset-env | @babel/) : to transform ES6 syntax to common js which the browser can understand
+3. installed react | react-dom : to use the react environment.
+4. created an "index.js" file in the root folder.
+5. created an "index.html" inside the src folder : where the react app will be rendered to the DOM.
+6. created "webpack.config.js" file and added the webpack configuration code such as the entry, output, module, plugins and devServer.
+7. created a .babelrc file where the babel plugin and preset is set.
+8. installed html-webpack-plugin so i can use my "index.html" file as template.
+9. created the react components
+10. installed few react component libraries.
+11. created the app layout components.
+12. installed react-apollo | apollo-boost | graphql so i can connect my frontend app to my backend app.
+13. got an error on arrow functions : the solution was to install (@babel/plugin-proposal-class-properties)
+
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+        <SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+      /><SUI_Segment
+color="blue"
+raised
+style={{ boxShadow: '0 8px 32px #aaa' }}
+>
+<SUI_Header as="h2" color="blue" attached="top">
+  <SUI_Icon name="settings" />
+  <SUI_Header.Content>
+    Employee Presence
+    <SUI_Header.Subheader style={{ color: 'grey' }}>
+      Overtime & Leave Management
+    </SUI_Header.Subheader>
+  </SUI_Header.Content>
+</SUI_Header>
+<br />
+<Antd_Form onSubmit={this.handleSubmit} className="login-form">
+  <Antd_Form.Item>
+    {getFieldDecorator('email', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="user"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        placeholder="Email Address"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    {getFieldDecorator('password', {
+      rules: [
+        {
+          required: true,
+          message: 'Please input your Password!',
+        },
+      ],
+    })(
+      <Antd_Input
+        size="large"
+        prefix={
+          <Antd_Icon
+            type="lock"
+            style={{ color: 'rgba(0,0,0,.25)' }}
+          />
+        }
+        type="password"
+        placeholder="Password"
+      />
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>
+<Antd_Row type="flex" justify="center">
+  <a
+    name="signin"
+    onClick={e => {
+      this.props.history.push('/signup');
+    }}
+  >
+    Sign up here
+  </a>
+</Antd_Row>
+<br />
+</SUI_Segment>
+</SUI_Segment>
+
+    )}
+  </Antd_Form.Item>
+  <Antd_Form.Item>
+    <Antd_Button
+      block
+      shape="round"
+      type="primary"
+      htmlType="submit"
+      size="large"
+    >
+      Signin
+    </Antd_Button>
+  </Antd_Form.Item>
+</Antd_Form>

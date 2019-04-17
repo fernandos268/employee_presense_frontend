@@ -11,7 +11,7 @@ const AppHeader = props => {
       padded
       style={{
         background: 'linear-gradient(to top right, #141E30 ,#243B55)',
-        boxShadow: '-2px 7px 12px -2px rgba(120,115,115,0.75)',
+        boxShadow: '0 8px 32px #aaa',
         height: '12%',
       }}
       verticalAlign="middle"

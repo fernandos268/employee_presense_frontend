@@ -20,7 +20,8 @@ import Overtime from '../Overtime';
 import DayOff from '../DayOff';
 import SignoutContainer from './SignoutContainer';
 
-// PRESENTATIONAL COMPONENT
+// Authentication HOC
+import AuthWrapper from '../Auth/AuthWrapper';
 
 class App extends Component {
   constructor(props) {
@@ -33,12 +34,12 @@ class App extends Component {
     };
   }
 
-  FetchGithubUsers = () => {
-    axios.get('https://api.github.com/users?page=3&per_page=100').then(resp => {
-      console.log(resp.data);
-      this.setState({ users: resp.data });
-    });
-  };
+  // FetchGithubUsers = () => {
+  //   axios.get('https://api.github.com/users?page=3&per_page=100').then(resp => {
+  //     console.log(resp.data);
+  //     this.setState({ users: resp.data });
+  //   });
+  // };
 
   handleMenuItemClick = e => {
     const activeMenuItem = e.target.id;
@@ -70,7 +71,7 @@ class App extends Component {
           />
           <Container fluid style={{ height: '88%', overflowY: 'auto' }}>
             <Segment basic padded style={{}}>
-              <Segment style={{}} basic>
+              <Segment basic>
                 <Switch>
                   <Route exact path="/" component={Home} />
                   <Route path="/overtime" component={Overtime} />
@@ -87,4 +88,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default AuthWrapper(App);

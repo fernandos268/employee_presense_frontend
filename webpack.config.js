@@ -7,8 +7,8 @@ module.exports = {
     main: './src/index.js',
   },
   output: {
-    filename: '[name].[hash].js',
-    path: path.resolve('./dist'),
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'index_bundle.js',
     publicPath: '/',
   },
   devtool: 'inline-source-map',
@@ -50,6 +50,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
+    historyApiFallback: true,
     port: 9000,
     open: true,
     hot: true,

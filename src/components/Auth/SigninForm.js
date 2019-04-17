@@ -15,18 +15,26 @@ import {
   Icon as Antd_Icon,
   Input as Antd_Input,
   Button as Antd_Button,
-  Checkbox as Antd_Checkbox,
+  Alert as Antd_Alert,
+  message as Antd_Message,
+  Spin as Antd_Spin,
   Row as Antd_Row,
+  Card as Antd_Card,
 } from 'antd';
 
 import { withRouter } from 'react-router-dom';
+
+// Auth
+
+import { isLoggedIn, setToken } from './Auth';
 
 class Signin_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
       redirectToReferrer: false,
-      error: '',
+      errors: null,
+      isLoading: false,
     };
   }
 
@@ -34,37 +42,76 @@ class Signin_Form extends Component {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        const signinResponse = await this.props.signinMutation({
-          variables: values,
-        });
-        console.log(signinResponse);
+        await this.props
+          .signinMutation({
+            variables: values,
+          })
+          .then(response => {
+            const { ok, errors, token } = response.data.signin;
+            this.setState({ isLoading: false, errors: errors });
+
+            if (ok) {
+              setToken(token);
+              Antd_Message.success(`Successfully logged in`);
+              this.props.history.replace('/');
+            }
+
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       }
     });
   };
 
+  componentWillMount() {
+    if (isLoggedIn()) this.props.history.replace('/');
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { error } = this.state;
+    const { isLoading, errors } = this.state;
 
     return (
       <SUI_Grid verticalAlign="middle" centered style={{ height: '100vh' }}>
         <SUI_Grid.Column width={5}>
-          <SUI_Segment basic padded style={{ height: '100%' }}>
-            <SUI_Segment
-              color="blue"
-              raised
-              style={{ boxShadow: ' 5px 5px 21px 0px rgba(163,163,163,1)' }}
-            >
-              <SUI_Header as="h2" color="blue" attached="top">
-                <SUI_Icon name="settings" />
-                <SUI_Header.Content>
-                  Employee Presence
-                  <SUI_Header.Subheader style={{ color: 'grey' }}>
-                    Overtime & Leave Management
-                  </SUI_Header.Subheader>
-                </SUI_Header.Content>
-              </SUI_Header>
-              <br />
+          <Antd_Card
+            style={{ boxShadow: '0 8px 32px #aaa' }}
+            title={
+              <Antd_Row type="flex" justify="center">
+                <SUI_Header as="h4" icon textAlign="center" color="grey">
+                  <SUI_Icon name="user" circular />
+                  <SUI_Header.Content>Sign in</SUI_Header.Content>
+                </SUI_Header>
+              </Antd_Row>
+            }
+            actions={[
+              <Antd_Row type="flex" justify="center">
+                <a
+                  style={{ size: '24' }}
+                  name="signin"
+                  onClick={e => {
+                    this.props.history.push('/signup');
+                  }}
+                >
+                  Sign up here
+                </a>
+              </Antd_Row>,
+            ]}
+          >
+            {errors !== null ? (
+              <Antd_Alert
+                message="Error"
+                description={errors.map(error => {
+                  return `${error.message} \n`;
+                })}
+                type="error"
+                showIcon
+              />
+            ) : null}
+            <br />
+            <Antd_Spin tip="Checking..." spinning={isLoading}>
               <Antd_Form onSubmit={this.handleSubmit} className="login-form">
                 <Antd_Form.Item>
                   {getFieldDecorator('email', {
@@ -121,25 +168,8 @@ class Signin_Form extends Component {
                   </Antd_Button>
                 </Antd_Form.Item>
               </Antd_Form>
-              <SUI_Grid
-                columns={2}
-                divided
-                stackable
-                centered
-                style={{ width: '100%' }}
-              >
-                <SUI_Grid.Column>
-                  <Antd_Row type="flex" justify="end">
-                    <a name="forgotpassword">Forgot passwordsss</a>
-                  </Antd_Row>
-                </SUI_Grid.Column>
-                <SUI_Grid.Column>
-                  <a name="signup">Sign up here</a>
-                </SUI_Grid.Column>
-              </SUI_Grid>
-              <br />
-            </SUI_Segment>
-          </SUI_Segment>
+            </Antd_Spin>
+          </Antd_Card>
         </SUI_Grid.Column>
       </SUI_Grid>
     );

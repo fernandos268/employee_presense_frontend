@@ -11,13 +11,13 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import App from './components/AppContainer/App';
 import UserSignin from './components/Auth/SigninForm';
+import UserSignup from './components/Auth/signupForm';
 
 // SETUP APOLLO CLIENT
 const client = new ApolloClient({
   uri: 'http://localhost:4040/graphql',
   onError: ({ networkError, graphQLErrors }) => {
     console.log('graphQLErrors', graphQLErrors);
-    console.log('networkError', networkError);
   },
 });
 
@@ -27,6 +27,7 @@ ReactDOM.render(
       <Switch>
         <Route exact path="/" component={App} />
         <Route exact path="/signin" component={UserSignin} />
+        <Route exact path="/signup" component={UserSignup} />
       </Switch>
     </Router>
   </ApolloProvider>,
