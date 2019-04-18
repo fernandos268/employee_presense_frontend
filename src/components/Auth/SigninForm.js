@@ -42,6 +42,7 @@ class Signin_Form extends Component {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
+        this.setState({ isLoading: true });
         await this.props
           .signinMutation({
             variables: values,
@@ -74,8 +75,9 @@ class Signin_Form extends Component {
     const { isLoading, errors } = this.state;
 
     return (
-      <SUI_Grid verticalAlign="middle" centered style={{ height: '100vh' }}>
+      <SUI_Grid verticalAlign="middle" padded centered style={{ height: '100vh' }}>
         <SUI_Grid.Column width={5}>
+        <SUI_Segment basic padded>
           <Antd_Card
             style={{ boxShadow: '0 8px 32px #aaa' }}
             title={
@@ -112,7 +114,7 @@ class Signin_Form extends Component {
             ) : null}
             <br />
             <Antd_Spin tip="Checking..." spinning={isLoading}>
-              <Antd_Form onSubmit={this.handleSubmit} className="login-form">
+              <Antd_Form onSubmit={this.handleSubmit} >
                 <Antd_Form.Item>
                   {getFieldDecorator('email', {
                     rules: [
@@ -170,6 +172,7 @@ class Signin_Form extends Component {
               </Antd_Form>
             </Antd_Spin>
           </Antd_Card>
+          </SUI_Segment>
         </SUI_Grid.Column>
       </SUI_Grid>
     );

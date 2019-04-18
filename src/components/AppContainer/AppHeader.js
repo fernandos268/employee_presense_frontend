@@ -1,13 +1,34 @@
 import React from 'react';
-import { Menu, Grid, Icon, Header as SUI_Header } from 'semantic-ui-react';
-
+import { Menu, Grid as SUI_Grid, Icon, Header as SUI_Header, Dropdown as SUI_Dropdown } from 'semantic-ui-react';
+import { Dropdown as Antd_Dropdown, Menu as Antd_Menu, Icon as Antd_Icon } from 'antd'
 import { Link, withRouter } from 'react-router-dom';
 
 import propTypes from 'prop-types';
 
+
 const AppHeader = props => {
+
+  const trigger = (
+    <span style={{ color: "white" }}>
+      <Icon name="user circle" /> {props.loggedInUser}
+    </span>
+  );
+
+  const menu = (
+    <Antd_Menu onClick={e => props.handleSignout(e)}>
+      <Antd_Menu.Item key="MenuItem-Profile" name="Opening Profile...">
+        <Antd_Icon type="user" />
+        Profile
+      </Antd_Menu.Item>
+      <Antd_Menu.Item key="MenuItem-Signout" name="Logging out...">
+        <Antd_Icon type="export" />
+        Sign-out
+      </Antd_Menu.Item>
+    </Antd_Menu>
+  );
+
   return (
-    <Grid
+    <SUI_Grid
       padded
       style={{
         background: 'linear-gradient(to top right, #141E30 ,#243B55)',
@@ -16,12 +37,13 @@ const AppHeader = props => {
       }}
       verticalAlign="middle"
     >
-      <Grid.Column>
+      <SUI_Grid.Column style={{ height: '100%' }}>
         <Menu
           secondary
-          style={{ background: 'transparent' }}
-          size="huge"
+          style={{ background: 'transparent', height: '100%' }}
+          size="large"
           stackable
+          fluid
         >
           <Menu.Item header>
             <SUI_Header as="h2" color="blue">
@@ -75,20 +97,15 @@ const AppHeader = props => {
               Day Off
             </Menu.Item>
             <Menu.Item />
-            <Menu.Item
-              id="signout"
-              as={Link}
-              to="/signout"
-              style={{ color: 'white' }}
-              onClick={e => props.handleMenuItemClick(e)}
-            >
-              <Icon name="sign-out" style={{ pointerEvents: 'none' }} />
-              Signout
+            <Menu.Item>
+              <Antd_Dropdown overlay={menu}>
+                <SUI_Dropdown trigger={trigger} icon={null} />
+              </Antd_Dropdown>
             </Menu.Item>
           </Menu.Menu>
         </Menu>
-      </Grid.Column>
-    </Grid>
+      </SUI_Grid.Column>
+    </SUI_Grid>
   );
 };
 
@@ -98,3 +115,14 @@ AppHeader.propTypes = {
 };
 
 export default AppHeader;
+
+
+{/* <Menu.Item
+id="signout"
+style={{ color: 'white' }}
+onClick={e => props.handleMenuItemClick(e)}
+>
+<Icon name="sign-out" style={{ pointerEvents: 'none' }} />
+Signout
+
+</Menu.Item> */}

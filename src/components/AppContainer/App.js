@@ -5,32 +5,32 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  withRouter,
 } from 'react-router-dom';
 
 // COMPONENT LIBRARY
-import { Segment, Container } from 'semantic-ui-react';
+import { Segment as SUI_Segment, Container as SUI_Container } from 'semantic-ui-react';
+import { message as Antd_Message, Modal as Antd_Modal } from 'antd'
 
 //APP COMPONENTS
-import AppHeader from '../presentational/AppHeader';
+import AppHeader from './AppHeader';
 
 // CONTAINER COMPONENTS
 import Home from '../Home';
 import Overtime from '../Overtime';
 import DayOff from '../DayOff';
-import SignoutContainer from './SignoutContainer';
 
 // Authentication HOC
 import AuthWrapper from '../Auth/AuthWrapper';
 
+// Auth Reusable Functions
+import { isLoggedIn, removeToken } from '../Auth/Auth'
+
+
 class App extends Component {
   constructor(props) {
     super(props);
-    this.myDiv = React.createRef();
     this.state = {
       activeMenuItem: 'home',
-      isLoggedIn: true,
-      isModalVisible: false,
     };
   }
 
@@ -51,6 +51,23 @@ class App extends Component {
     }
   };
 
+  handleSignout = e => {
+    console.log(e.key)
+    if (e.key === "MenuItem-Signout") {
+      if (isLoggedIn()) {
+        Antd_Modal.confirm({
+          title: 'Are you sure you want to signout?',
+          okText: 'Yes',
+          onOk: () => {
+            removeToken()
+            this.props.history.replace("/signin");
+            Antd_Message.success("Account has been signed out");
+          },
+        });
+      }
+    }
+  }
+
   componentWillMount() {
     // this.props.history.push('/');
   }
@@ -60,28 +77,29 @@ class App extends Component {
   }
 
   render() {
-    const { isLoggedIn, activeMenuItem } = this.state;
-
+    const { activeMenuItem } = this.state;
+    const { username } = this.props.tokenContent
     return (
       <Router>
         <div style={{ height: '100vh' }}>
           <AppHeader
             handleMenuItemClick={this.handleMenuItemClick}
             activeMenuItem={activeMenuItem}
+            loggedInUser={username}
+            handleSignout={this.handleSignout}
           />
-          <Container fluid style={{ height: '88%', overflowY: 'auto' }}>
-            <Segment basic padded style={{}}>
-              <Segment basic>
+          <SUI_Container fluid style={{ height: '88%', overflowY: 'auto' }}>
+            <SUI_Segment basic padded style={{}}>
+              <SUI_Segment basic>
                 <Switch>
                   <Route exact path="/" component={Home} />
                   <Route path="/overtime" component={Overtime} />
                   <Route path="/dayoff" component={DayOff} />
-                  <Route path="/signout" component={SignoutContainer} />
                   <Route render={() => <h1>Page Not Found</h1>} />
                 </Switch>
-              </Segment>
-            </Segment>
-          </Container>
+              </SUI_Segment>
+            </SUI_Segment>
+          </SUI_Container>
         </div>
       </Router>
     );

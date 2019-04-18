@@ -6,13 +6,12 @@ import jwtDecode from 'jwt-decode';
 
 import { withRouter } from 'react-router-dom';
 import {
-  Form,
+  Form as Antd_Form,
   Icon,
   Input,
   Steps,
   Button,
   message as Antd_Message,
-  Checkbox,
   Spin as Antd_Spin,
   Row as Antd_Row,
   Card as Antd_Card,
@@ -26,7 +25,7 @@ import {
 
 const Step = Steps.Step;
 
-const FormItem = Form.Item;
+const FormItem = Antd_Form.Item;
 
 class RegisterForm extends Component {
   constructor(props) {
@@ -241,7 +240,7 @@ class RegisterForm extends Component {
                   </Steps>
 
                   <div className="steps-content">
-                    <Form onSubmit={this.handleSubmit}>
+                    <Antd_Form onSubmit={this.handleSubmit}>
                       <div
                         style={{
                           display: this.state.current === 0 ? 'block' : 'none',
@@ -435,7 +434,7 @@ class RegisterForm extends Component {
                         }}
                       >
                         <br />
-                        <Form.Item>
+                        <FormItem>
                           <br />
                           <Antd_Row type="flex" justify="end">
                             <Button
@@ -451,9 +450,9 @@ class RegisterForm extends Component {
                               Submit
                             </Button>
                           </Antd_Row>
-                        </Form.Item>
+                        </FormItem>
                       </div>
-                    </Form>
+                    </Antd_Form>
                   </div>
                 </div>
               </Antd_Card>
@@ -467,7 +466,7 @@ class RegisterForm extends Component {
   }
 }
 
-const SignupForm = Form.create()(RegisterForm);
+const SignupForm = Antd_Form.create()(RegisterForm);
 
 export default graphql(signupMutation, { name: 'signupMutation' })(
   withRouter(SignupForm)
