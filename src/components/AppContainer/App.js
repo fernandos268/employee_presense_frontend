@@ -25,6 +25,9 @@ import AuthWrapper from '../Auth/AuthWrapper';
 // Auth Reusable Functions
 import { isLoggedIn, removeToken } from '../Auth/Auth'
 
+// Fetch data from GraphQL API
+import { graphql, compose } from 'react-apollo';
+import { fetchUsers } from '../Graphql/queries'
 
 class App extends Component {
   constructor(props) {
@@ -80,6 +83,8 @@ class App extends Component {
     const { username, userId } = this.props.tokenContent
     // console.log(`App userId: ${userId}`);
 
+    const { users } = this.props.data
+
     return (
       <Router>
         <div style={{ height: '100vh' }}>
@@ -94,7 +99,7 @@ class App extends Component {
               <SUI_Segment basic>
                 <Switch>
                   <Route exact path="/" component={Home} />
-                  <Route path="/overtime" component={() => <MyOvertime userId={userId} />} />
+                  <Route path="/overtime" component={() => <MyOvertime userId={userId} users={users} />} />
                   <Route path="/dayoff" component={DayOff} />
                   <Route render={() => <h1>Page Not Found</h1>} />
                 </Switch>
@@ -107,4 +112,7 @@ class App extends Component {
   }
 }
 
-export default AuthWrapper(App);
+
+export default AuthWrapper(compose(
+  graphql(fetchUsers),
+)(App));

@@ -1,7 +1,6 @@
 import { gql } from 'apollo-boost';
 
 const fetchOvertimes = gql`
-
 query fetchUser($id: ID!){
     fetchUser(userId: $id){
         ok
@@ -19,9 +18,36 @@ query fetchUser($id: ID!){
             description
             status
           }
+          assignedOvertimes {
+            _id
+            date
+            startTime
+            endTime
+            duration
+            description
+            status
+            creator{
+              firstName
+              lastName
+              suffix
+            }
+          }
         }
     }
   }
 `
 
-export { fetchOvertimes }
+const fetchUsers = gql`
+{
+  users {
+    _id
+    firstName
+    lastName
+    suffix
+    username
+    email
+  }
+}
+`
+
+export { fetchOvertimes, fetchUsers }

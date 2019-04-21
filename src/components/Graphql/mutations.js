@@ -52,6 +52,7 @@ mutation(
   $duration: String!
   $description: String!
   $status: String!
+  $approverId: ID!
 ) {
   createOvertime(
     overtimeInput: {
@@ -61,7 +62,7 @@ mutation(
       duration: $duration
       description: $description
       status: $status
-
+      approverId: $approverId
     }
   ) {
     ok
@@ -82,4 +83,25 @@ mutation(
 }
 `
 
-export { signinMutation, signupMutation, createOvertimeMutation };
+const deleteOvertimeMutation = gql`
+  mutation($id: ID!){
+    deleteOvertime(overtimeId:$id){
+      ok
+    	errors{
+        path
+        message
+      }
+    	overtime{
+        date
+        description
+      }
+    }
+  }
+`
+
+export {
+  signinMutation,
+  signupMutation,
+  createOvertimeMutation,
+  deleteOvertimeMutation
+};

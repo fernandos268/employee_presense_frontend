@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import { signupMutation } from '../Graphql/mutations';
+import { fetchUsers } from '../Graphql/queries'
 
 import { isLoggedIn } from './Auth'
 
@@ -58,6 +59,7 @@ class RegisterForm extends Component {
                 password: values.password,
                 isAdmin: false,
               },
+              refetchQueries: [{ query: fetchUsers, }]
             })
             .then(response => {
               const { ok, errors } = response.data.createUser;
@@ -468,6 +470,12 @@ class RegisterForm extends Component {
 
 const SignupForm = Antd_Form.create()(RegisterForm);
 
-export default graphql(signupMutation, { name: 'signupMutation' })(
-  withRouter(SignupForm)
-);
+// export default graphql(signupMutation, { name: 'signupMutation' })(
+//   withRouter(SignupForm)
+// );
+
+
+export default compose(
+  graphql(signupMutation, { name: 'signupMutation' }),
+  graphql(fetchUsers),
+)(withRouter(SignupForm))
