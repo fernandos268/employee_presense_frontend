@@ -44,14 +44,42 @@ const signupMutation = gql`
   }
 `;
 
-export { signinMutation, signupMutation };
+const createOvertimeMutation = gql`
+mutation(
+  $date: String!
+  $startTime: String!
+  $endTime: String!
+  $duration: String!
+  $description: String!
+  $status: String!
+) {
+  createOvertime(
+    overtimeInput: {
+      date: $date
+      startTime: $startTime
+      endTime: $endTime
+      duration: $duration
+      description: $description
+      status: $status
 
-// {
-//   $firstName:String!,
-//   $lastName:String!,
-//   $suffix:String!,
-//   $username:String!,
-//   $email:String!,
-//   $password:String!,
-//   $isAdmin:Boolean!
-// }
+    }
+  ) {
+    ok
+    errors {
+      path
+      message
+    }
+    overtime{
+      _id
+      date
+      startTime
+      endTime
+      duration
+      description
+      status
+    }
+  }
+}
+`
+
+export { signinMutation, signupMutation, createOvertimeMutation };

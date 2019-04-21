@@ -57,7 +57,6 @@ class Signin_Form extends Component {
               this.props.history.replace('/');
             }
 
-            console.log(response);
           })
           .catch(error => {
             console.log(error);
@@ -77,101 +76,101 @@ class Signin_Form extends Component {
     return (
       <SUI_Grid verticalAlign="middle" padded centered style={{ height: '100vh' }}>
         <SUI_Grid.Column width={5}>
-        <SUI_Segment basic padded>
-          <Antd_Card
-            style={{ boxShadow: '0 8px 32px #aaa' }}
-            title={
-              <Antd_Row type="flex" justify="center">
-                <SUI_Header as="h4" icon textAlign="center" color="grey">
-                  <SUI_Icon name="user" circular />
-                  <SUI_Header.Content>Sign in</SUI_Header.Content>
-                </SUI_Header>
-              </Antd_Row>
-            }
-            actions={[
-              <Antd_Row type="flex" justify="center">
-                <a
-                  style={{ size: '24' }}
-                  name="signin"
-                  onClick={e => {
-                    this.props.history.push('/signup');
-                  }}
-                >
-                  Sign up here
-                </a>
-              </Antd_Row>,
-            ]}
-          >
-            {errors !== null ? (
-              <Antd_Alert
-                message="Error"
-                description={errors.map(error => {
-                  return `${error.message} \n`;
-                })}
-                type="error"
-                showIcon
-              />
-            ) : null}
-            <br />
-            <Antd_Spin tip="Checking..." spinning={isLoading}>
-              <Antd_Form onSubmit={this.handleSubmit} >
-                <Antd_Form.Item>
-                  {getFieldDecorator('email', {
-                    rules: [
-                      {
-                        required: true,
-                        message: 'Please input your email!',
-                      },
-                    ],
-                  })(
-                    <Antd_Input
-                      size="large"
-                      prefix={
-                        <Antd_Icon
-                          type="user"
-                          style={{ color: 'rgba(0,0,0,.25)' }}
-                        />
-                      }
-                      placeholder="Email Address"
-                    />
-                  )}
-                </Antd_Form.Item>
-                <Antd_Form.Item>
-                  {getFieldDecorator('password', {
-                    rules: [
-                      {
-                        required: true,
-                        message: 'Please input your Password!',
-                      },
-                    ],
-                  })(
-                    <Antd_Input
-                      size="large"
-                      prefix={
-                        <Antd_Icon
-                          type="lock"
-                          style={{ color: 'rgba(0,0,0,.25)' }}
-                        />
-                      }
-                      type="password"
-                      placeholder="Password"
-                    />
-                  )}
-                </Antd_Form.Item>
-                <Antd_Form.Item>
-                  <Antd_Button
-                    block
-                    shape="round"
-                    type="primary"
-                    htmlType="submit"
-                    size="large"
+          <SUI_Segment basic padded>
+            <Antd_Card
+              style={{ boxShadow: '0 8px 32px #aaa' }}
+              title={
+                <Antd_Row type="flex" justify="center">
+                  <SUI_Header as="h4" icon textAlign="center" color="grey">
+                    <SUI_Icon name="user" circular />
+                    <SUI_Header.Content>Sign in</SUI_Header.Content>
+                  </SUI_Header>
+                </Antd_Row>
+              }
+              actions={[
+                <Antd_Row type="flex" justify="center">
+                  <a
+                    style={{ size: '24' }}
+                    name="signin"
+                    onClick={e => {
+                      this.props.history.push('/signup');
+                    }}
                   >
-                    Signin
+                    Sign up here
+                </a>
+                </Antd_Row>,
+              ]}
+            >
+              {errors !== null ? (
+                <Antd_Alert
+                  message="Error"
+                  description={errors.map(error => {
+                    return `${error.message} \n`;
+                  })}
+                  type="error"
+                  showIcon
+                />
+              ) : null}
+              <br />
+              <Antd_Spin tip="Checking..." spinning={isLoading}>
+                <Antd_Form onSubmit={this.handleSubmit} >
+                  <Antd_Form.Item>
+                    {getFieldDecorator('email', {
+                      rules: [
+                        {
+                          required: true,
+                          message: 'Please input your email!',
+                        },
+                      ],
+                    })(
+                      <Antd_Input
+                        size="large"
+                        prefix={
+                          <Antd_Icon
+                            type="user"
+                            style={{ color: 'rgba(0,0,0,.25)' }}
+                          />
+                        }
+                        placeholder="Email Address"
+                      />
+                    )}
+                  </Antd_Form.Item>
+                  <Antd_Form.Item>
+                    {getFieldDecorator('password', {
+                      rules: [
+                        {
+                          required: true,
+                          message: 'Please input your Password!',
+                        },
+                      ],
+                    })(
+                      <Antd_Input.Password
+                        size="large"
+                        prefix={
+                          <Antd_Icon
+                            type="lock"
+                            style={{ color: 'rgba(0,0,0,.25)' }}
+                          />
+                        }
+                        type="password"
+                        placeholder="Password"
+                      />
+                    )}
+                  </Antd_Form.Item>
+                  <Antd_Form.Item>
+                    <Antd_Button
+                      block
+                      shape="round"
+                      type="primary"
+                      htmlType="submit"
+                      size="large"
+                    >
+                      Signin
                   </Antd_Button>
-                </Antd_Form.Item>
-              </Antd_Form>
-            </Antd_Spin>
-          </Antd_Card>
+                  </Antd_Form.Item>
+                </Antd_Form>
+              </Antd_Spin>
+            </Antd_Card>
           </SUI_Segment>
         </SUI_Grid.Column>
       </SUI_Grid>

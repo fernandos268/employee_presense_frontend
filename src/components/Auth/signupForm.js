@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { graphql } from 'react-apollo';
 import { signupMutation } from '../Graphql/mutations';
 
-import jwtDecode from 'jwt-decode';
+import { isLoggedIn } from './Auth'
 
 import { withRouter } from 'react-router-dom';
 import {
@@ -101,7 +101,7 @@ class RegisterForm extends Component {
   };
 
   componentWillMount() {
-    // if (isLoggedIn()) this.props.history.replace('/');
+    if (isLoggedIn()) this.props.history.replace('/');
   }
 
   next = () => {

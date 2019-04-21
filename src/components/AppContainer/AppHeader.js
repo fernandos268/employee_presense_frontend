@@ -1,6 +1,15 @@
 import React from 'react';
-import { Menu, Grid as SUI_Grid, Icon, Header as SUI_Header, Dropdown as SUI_Dropdown } from 'semantic-ui-react';
-import { Dropdown as Antd_Dropdown, Menu as Antd_Menu, Icon as Antd_Icon } from 'antd'
+import {
+  Menu, Grid as SUI_Grid,
+  Icon, Header as SUI_Header,
+  Dropdown as SUI_Dropdown
+} from 'semantic-ui-react';
+import {
+  Dropdown as Antd_Dropdown,
+  Menu as Antd_Menu,
+  Icon as Antd_Icon,
+  Divider as Antd_Divider,
+} from 'antd'
 import { Link, withRouter } from 'react-router-dom';
 
 import propTypes from 'prop-types';
@@ -46,8 +55,8 @@ const AppHeader = props => {
           fluid
         >
           <Menu.Item header>
-            <SUI_Header as="h2" color="blue">
-              <Icon name="settings" />
+            <SUI_Header as="h3" color="blue">
+              <Icon name="calendar alternate outline" style={{ color: 'lightgrey' }} />
               <SUI_Header.Content>
                 Employee Presence
                 <SUI_Header.Subheader style={{ color: 'lightgrey' }}>
@@ -96,7 +105,9 @@ const AppHeader = props => {
               />
               Day Off
             </Menu.Item>
-            <Menu.Item />
+            <Menu.Item>
+              <Antd_Divider type="vertical" />
+            </Menu.Item>
             <Menu.Item>
               <Antd_Dropdown overlay={menu}>
                 <SUI_Dropdown trigger={trigger} icon={null} />
@@ -115,14 +126,3 @@ AppHeader.propTypes = {
 };
 
 export default AppHeader;
-
-
-{/* <Menu.Item
-id="signout"
-style={{ color: 'white' }}
-onClick={e => props.handleMenuItemClick(e)}
->
-<Icon name="sign-out" style={{ pointerEvents: 'none' }} />
-Signout
-
-</Menu.Item> */}

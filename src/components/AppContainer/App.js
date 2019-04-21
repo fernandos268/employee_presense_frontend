@@ -16,7 +16,7 @@ import AppHeader from './AppHeader';
 
 // CONTAINER COMPONENTS
 import Home from '../Home';
-import Overtime from '../Overtime';
+import MyOvertime from '../Overtime/MyOvertime';
 import DayOff from '../DayOff';
 
 // Authentication HOC
@@ -52,7 +52,6 @@ class App extends Component {
   };
 
   handleSignout = e => {
-    console.log(e.key)
     if (e.key === "MenuItem-Signout") {
       if (isLoggedIn()) {
         Antd_Modal.confirm({
@@ -78,7 +77,9 @@ class App extends Component {
 
   render() {
     const { activeMenuItem } = this.state;
-    const { username } = this.props.tokenContent
+    const { username, userId } = this.props.tokenContent
+    // console.log(`App userId: ${userId}`);
+
     return (
       <Router>
         <div style={{ height: '100vh' }}>
@@ -93,7 +94,7 @@ class App extends Component {
               <SUI_Segment basic>
                 <Switch>
                   <Route exact path="/" component={Home} />
-                  <Route path="/overtime" component={Overtime} />
+                  <Route path="/overtime" component={() => <MyOvertime userId={userId} />} />
                   <Route path="/dayoff" component={DayOff} />
                   <Route render={() => <h1>Page Not Found</h1>} />
                 </Switch>
