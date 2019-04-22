@@ -10,11 +10,13 @@ import {
   Col as Antd_Col,
   Select as Antd_Select,
   Spin as Antd_Spin,
+  Statistic as Antd_Statistic,
+  Icon as Antd_Icon,
 } from 'antd';
 
 import { Button as SUI_Button, Icon as SUI_Icon } from 'semantic-ui-react';
 
-const Overtime_Form = props => {
+const Dayoff_Form = props => {
   const { getFieldDecorator } = props.form;
 
   const { handleSubmit, onFormClose } = props;
@@ -35,58 +37,50 @@ const Overtime_Form = props => {
         style={{ height: '100%' }}
       >
         <Antd_Form layout="vertical">
-          <Antd_Form.Item label="Date">
-            {getFieldDecorator('date', {
+          <Antd_Form.Item label="Start Date">
+            {getFieldDecorator('startDate', {
               rules: [
                 {
                   required: true,
-                  message: 'Please select the date',
+                  message: 'Please select the start date',
                 },
               ],
             })(
-              <Antd_DatePicker style={{ width: '100%' }} format="MM/DD/YYYY" />
+              <Antd_DatePicker
+                showToday={false}
+                style={{ width: '100%' }}
+                format="MM/DD/YYYY"
+              />
             )}
           </Antd_Form.Item>
 
-          <Antd_Row>
-            <Antd_Col span={9}>
-              <Antd_Form.Item label="Time Started">
-                {getFieldDecorator('timeStarted', {
-                  rules: [
-                    {
-                      required: true,
-                      message: 'Plese provide the description of work done',
-                    },
-                  ],
-                })(<Antd_TimePicker format="HH:mm" />)}
-              </Antd_Form.Item>
-            </Antd_Col>
+          <Antd_Form.Item label="End Date">
+            {getFieldDecorator('endDate', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please select the end date',
+                },
+              ],
+            })(
+              <Antd_DatePicker
+                showToday={false}
+                style={{ width: '100%' }}
+                format="MM/DD/YYYY"
+              />
+            )}
+          </Antd_Form.Item>
 
-            <Antd_Col span={9}>
-              <Antd_Form.Item label="Time Ended">
-                {getFieldDecorator('timeEnded', {
-                  rules: [
-                    {
-                      required: true,
-                      message: 'Please provide the description of work done',
-                    },
-                  ],
-                })(<Antd_TimePicker format="HH:mm" />)}
-              </Antd_Form.Item>
-            </Antd_Col>
-            <Antd_Col span={6}>
-              <Antd_Form.Item label="Duration">
-                {getFieldDecorator('duration', {
-                  rules: [
-                    {
-                      required: true,
-                      message: 'Auto Calculated',
-                    },
-                  ],
-                })(<Antd_Input disabled />)}
-              </Antd_Form.Item>
-            </Antd_Col>
-          </Antd_Row>
+          <Antd_Form.Item label="Duration">
+            {getFieldDecorator('duration', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Auto Calculated',
+                },
+              ],
+            })(<Antd_Input disabled />)}
+          </Antd_Form.Item>
 
           <Antd_Form.Item label="Description">
             {getFieldDecorator('description', {
@@ -126,10 +120,10 @@ const Overtime_Form = props => {
   );
 };
 
-const OvertimeForm = Antd_Form.create({
+const DayOffForm = Antd_Form.create({
   onValuesChange: (props, changedValues, allValues) => {
     props.handleOnValueChange(props, changedValues, allValues);
   },
-})(Overtime_Form);
+})(Dayoff_Form);
 
-export default OvertimeForm;
+export default DayOffForm;
