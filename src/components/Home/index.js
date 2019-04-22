@@ -4,6 +4,9 @@ import { Grid, Segment } from 'semantic-ui-react';
 
 import CalendarView from './CalendarView';
 
+import { graphql, compose } from 'react-apollo';
+import { fetchUserData } from '../Graphql/queries';
+
 class DayOff extends Component {
   constructor() {
     super();
@@ -11,11 +14,18 @@ class DayOff extends Component {
   }
 
   render() {
+    const loading = this.props.data.loading
+    let createdOvertimes, createdDayOffs;
+    if (!loading) {
+      createdOvertimes = this.props.data.fetchUser.user.createdOvertimes || [];
+      createdDayOffs = this.props.data.fetchUser.user.createdDayOffs || [];
+    }
+
     return (
       <Grid>
         <Grid.Column>
           <Segment raised>
-            <CalendarView />
+            <CalendarView createdOvertimes={createdOvertimes} createdDayOffs={createdDayOffs} loading={loading} />
           </Segment>
         </Grid.Column>
       </Grid>
@@ -23,4 +33,8 @@ class DayOff extends Component {
   }
 }
 
-export default DayOff;
+export default compose(
+  graphql(fetchUserData, {
+    options: props => ({ variables: { id: props.userId } }),
+  })
+)(DayOff);

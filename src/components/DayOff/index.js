@@ -201,12 +201,12 @@ class DayOff extends Component {
         return (
           <Antd_Select.Option key={user._id}>{`${user.firstName} ${
             user.lastName
-          } ${suffix}`}</Antd_Select.Option>
+            } ${suffix}`}</Antd_Select.Option>
         );
       });
     }
 
-    let MyTableData, AssgnedTableData;
+    let MyTableData, MyTableDataTotal, AssignedTableData, AssignedTableDataTotal = 0;
     // console.log(this.props);
     if (!loading) {
       const createdDayOffs =
@@ -221,17 +221,17 @@ class DayOff extends Component {
             endDate: moment(dayoff.endDate, 'x').format('MM/DD/YYYY'),
             approver: `${dayoff.approver.firstName} ${
               dayoff.approver.lastName
-            } ${suffix}`,
+              } ${suffix}`,
           };
         });
+        MyTableDataTotal = MyTableData.length
       }
 
-      console.log(MyTableData);
 
       const assignedDayoffs =
         this.props.data.fetchUser.user.assignedDayOffs || [];
       if (assignedDayoffs) {
-        AssgnedTableData = assignedDayoffs.map(assignedDayoff => {
+        AssignedTableData = assignedDayoffs.map(assignedDayoff => {
           const suffix = assignedDayoff.creator.suffix || '';
           return {
             ...assignedDayoff,
@@ -242,9 +242,10 @@ class DayOff extends Component {
             endDate: moment(assignedDayoff.endDate, 'x').format('MM/DD/YYYY'),
             name: `${assignedDayoff.creator.firstName} ${
               assignedDayoff.creator.lastName
-            } ${suffix}`,
+              } ${suffix}`,
           };
         });
+        AssignedTableDataTotal = AssignedTableData.length
       }
     }
 
@@ -475,12 +476,13 @@ class DayOff extends Component {
                     columns={MyTableColumns}
                     dataSource={MyTableData}
                     size="small"
+                    pagination={{ defaultPageSize: 5, total: MyTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            <SUI_Grid columns="equal" verticalAlign="middle">
+            {AssignedTableDataTotal > 0 ? (<SUI_Grid columns="equal" verticalAlign="middle">
               <SUI_Grid.Row>
                 <SUI_Grid.Column>
                   <SUI_Header as="h3" color="grey">
@@ -493,12 +495,13 @@ class DayOff extends Component {
                   <Antd_Table
                     bordered
                     columns={MyApprovalColumns}
-                    dataSource={AssgnedTableData}
+                    dataSource={AssignedTableData}
                     size="small"
+                    pagination={{ defaultPageSize: 5, total: AssignedTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
-            </SUI_Grid>
+            </SUI_Grid>) : null}
           </SUI_Segment>
           <DayOffForm
             formVisible={formVisible}

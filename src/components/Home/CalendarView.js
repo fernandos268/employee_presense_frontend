@@ -36,10 +36,12 @@ const getListData = value => {
       break;
     default:
   }
+
   return listData || [];
 };
 
 const dateCellRender = value => {
+
   const listData = getListData(value);
   return (
     <ul className="events">
@@ -52,27 +54,56 @@ const dateCellRender = value => {
   );
 };
 
-const getMonthData = value => {
-  if (value.month() === 8) {
-    return 1394;
-  }
-};
 
-const monthCellRender = value => {
-  const num = getMonthData(value);
-  return num ? (
-    <div className="notes-month">
-      <section>{num}</section>
-      <span>Backlog number</span>
-    </div>
-  ) : null;
-};
+const getDateArray = (start, end) => {
+  var arr = new Array();
+  var dt = new Date(start);
+  while (dt <= end) {
+    arr.push(new Date(dt));
+    dt.setDate(dt.getDate() + 1);
+  }
+
+  return arr;
+}
 
 const CalendarVIew = props => {
+  const { createdDayOffs, createdOvertimes, loading } = props
+
+  let dayOffItems = []
+  if (!loading) {
+    dayOffItems = createdDayOffs.map(dayoff => {
+      let color = '';
+      switch (dayoff.status) {
+        case 'Pending':
+          color = 'blue';
+          break;
+        case 'Approved':
+          color = 'green';
+          break;
+        case 'Rejected':
+          color = 'red';
+          break;
+        default:
+          color = 'blue';
+      }
+
+      const startDate = new Date(dayoff.startDate)
+      const endDate = new Date(dayoff.endDate)
+
+
+      return {
+        dates: getDateArray(startDate, endDate),
+        color,
+        type: "Dayy Off"
+      }
+    })
+  }
+  console.log(dayOffItems);
+
+
   return (
     <Calendar
       dateCellRender={dateCellRender}
-      monthCellRender={monthCellRender}
     />
   );
 };

@@ -70,7 +70,7 @@ class Overtime extends Component {
       const calcDuration = moment.duration(end.diff(start));
       const duration = `${calcDuration._data.hours} Hr & ${
         calcDuration._data.minutes
-      } Min`;
+        } Min`;
 
       if (calcDuration._milliseconds > 0) {
         // return this.setState({ duration })
@@ -213,12 +213,12 @@ class Overtime extends Component {
         return (
           <Antd_Select.Option key={user._id}>{`${user.firstName} ${
             user.lastName
-          } ${suffix}`}</Antd_Select.Option>
+            } ${suffix}`}</Antd_Select.Option>
         );
       });
     }
 
-    let MyTableData, AssgnedTableData;
+    let MyTableData, MyTableDataTotal, AssignedTableData, AssignedTableDataTotal = 0;
     if (!loading) {
       const overtimes = this.props.data.fetchUser.user.createdOvertimes || [];
       if (overtimes) {
@@ -232,16 +232,17 @@ class Overtime extends Component {
             duration: overtime.duration,
             approver: `${overtime.approver.firstName} ${
               overtime.approver.lastName
-            } ${suffix}`,
+              } ${suffix}`,
             status: overtime.status,
           };
         });
+        MyTableDataTotal = MyTableData.length
       }
 
       const assignedOvertimes =
         this.props.data.fetchUser.user.assignedOvertimes || [];
       if (assignedOvertimes) {
-        AssgnedTableData = assignedOvertimes.map(assignedOvertime => {
+        AssignedTableData = assignedOvertimes.map(assignedOvertime => {
           const suffix = assignedOvertime.creator.suffix || '';
           return {
             ...assignedOvertime,
@@ -249,14 +250,15 @@ class Overtime extends Component {
             date: moment(assignedOvertime.date, 'x').format('MM/DD/YYYY'),
             timeWorked: `${assignedOvertime.startTime} - ${
               assignedOvertime.endTime
-            }`,
+              }`,
             duration: assignedOvertime.duration,
             status: assignedOvertime.status,
             name: `${assignedOvertime.creator.firstName} ${
               assignedOvertime.creator.lastName
-            } ${suffix}`,
+              } ${suffix}`,
           };
         });
+        AssignedTableDataTotal = AssignedTableData.length
       }
     }
 
@@ -321,12 +323,12 @@ class Overtime extends Component {
         align: 'center',
         render: (text, record) => (
           <span>
-            <Antd_Tooltip placement="left" title="Delete">
+            <Antd_Tooltip placement="left" title="Cancel">
               <Antd_Button
                 shape="circle"
                 type="danger"
                 ghost
-                icon="delete"
+                icon="close"
                 onClick={this.handleDelete.bind(this, record)}
               />
             </Antd_Tooltip>
@@ -486,12 +488,13 @@ class Overtime extends Component {
                     columns={MyTableColumns}
                     dataSource={MyTableData}
                     size="small"
+                    pagination={{ defaultPageSize: 5, total: MyTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            <SUI_Grid columns="equal" verticalAlign="middle">
+            {AssignedTableDataTotal > 0 ? (<SUI_Grid columns="equal" verticalAlign="middle">
               <SUI_Grid.Row>
                 <SUI_Grid.Column>
                   <SUI_Header as="h3" color="grey">
@@ -504,12 +507,13 @@ class Overtime extends Component {
                   <Antd_Table
                     bordered
                     columns={MyApprovalColumns}
-                    dataSource={AssgnedTableData}
+                    dataSource={AssignedTableData}
                     size="small"
+                    pagination={{ defaultPageSize: 5, total: AssignedTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
-            </SUI_Grid>
+            </SUI_Grid>) : null}
           </SUI_Segment>
           <OvertimeForm
             formVisible={formVisible}
