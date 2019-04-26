@@ -4,6 +4,7 @@ import { Grid, Segment } from 'semantic-ui-react';
 
 import { Calendar, Badge } from 'antd';
 import '../styles/CalendarView.css';
+import { object } from 'prop-types';
 // import DayOffCalendar from './DayOffCalendar';
 
 // FORM COMPONENT
@@ -12,27 +13,16 @@ const getListData = value => {
   let listData;
   switch (value.date()) {
     case 8:
-      listData = [
-        { type: 'warning', content: 'This is warning event.' },
-        { type: 'success', content: 'This is usual event.' },
-      ];
+      listData = [{ type: 'success', content: 'Approved' }];
       break;
     case 10:
       listData = [
-        { type: 'warning', content: 'This is warning event.' },
-        { type: 'success', content: 'This is usual event.' },
-        { type: 'error', content: 'This is error event.' },
+        { type: 'success', content: 'approved' },
+        { type: 'error', content: 'Rejected' },
       ];
       break;
     case 15:
-      listData = [
-        { type: 'warning', content: 'This is warning event' },
-        { type: 'success', content: 'This is very long usual event。。....' },
-        { type: 'error', content: 'This is error event 1.' },
-        { type: 'error', content: 'This is error event 2.' },
-        { type: 'error', content: 'This is error event 3.' },
-        { type: 'error', content: 'This is error event 4.' },
-      ];
+      listData = [{ type: 'error', content: 'Rejected' }];
       break;
     default:
   }
@@ -41,7 +31,6 @@ const getListData = value => {
 };
 
 const dateCellRender = value => {
-
   const listData = getListData(value);
   return (
     <ul className="events">
@@ -54,22 +43,23 @@ const dateCellRender = value => {
   );
 };
 
+// status={item.type}
 
-const getDateArray = (start, end) => {
-  var arr = new Array();
-  var dt = new Date(start);
-  while (dt <= end) {
-    arr.push(new Date(dt));
-    dt.setDate(dt.getDate() + 1);
+const getDatesBetween = (start, end, datesArray = []) => {
+  if (start.isSameOrBefore(end)) {
+    const isWeekday = start.day() === 0 || start.day() === 6;
+    if (!isWeekday) {
+      datesArray.push(start._d);
+    }
+    return getDatesBetween(start.clone().add(1, 'day'), end, datesArray);
   }
-
-  return arr;
-}
+  return datesArray;
+};
 
 const CalendarVIew = props => {
-  const { createdDayOffs, createdOvertimes, loading } = props
+  const { createdDayOffs, createdOvertimes, loading } = props;
 
-  let dayOffItems = []
+  let dayOffItems;
   if (!loading) {
     dayOffItems = createdDayOffs.map(dayoff => {
       let color = '';
@@ -87,25 +77,39 @@ const CalendarVIew = props => {
           color = 'blue';
       }
 
-      const startDate = new Date(dayoff.startDate)
-      const endDate = new Date(dayoff.endDate)
-
+      const startDate = moment(dayoff.startDate);
+      const endDate = moment(dayoff.endDate);
 
       return {
-        dates: getDateArray(startDate, endDate),
-        color,
-        type: "Dayy Off"
-      }
-    })
+        inclusiveDates: getDatesBetween(moment(startDate, endDate)).map(
+          date => {
+            return {
+              date: date,
+              color,
+              content: 'Day Off',
+            };
+          }
+        ),
+      };
+    });
   }
-  console.log(dayOffItems);
 
+  let calendarItems = [];
+  if (dayOffItems) {
+    calendarItems = Object.assign({}, ...dayOffItems);
+    console.log(dayOffItems);
+    // const calenarItems = dayOffItems.map(inclusiveDate => [...inclusiveDate]);
+    console.log(calendarItems);
+    // getListData(calendarItems);
+  }
 
-  return (
-    <Calendar
-      dateCellRender={dateCellRender}
-    />
-  );
+  // console.log(
+  //   calendarItems.inclusiveDates.map(item => {
+  //     return item;
+  //   })
+  // );
+
+  return <Calendar dateCellRender={dateCellRender} />;
 };
 
 export default CalendarVIew;

@@ -4,6 +4,7 @@ import moment from 'moment';
 
 // GraphQL
 import { graphql, compose } from 'react-apollo';
+
 import {
   createDayOffMutation,
   deleteDayOffMutation,
@@ -46,6 +47,21 @@ class DayOff extends Component {
     });
   };
 
+  getDateDifference = (start, end, datesArray = []) => {
+    if (start.isSameOrBefore(end)) {
+      const isWeekday = start.day() === 0 || start.day() === 6;
+      if (!isWeekday) {
+        datesArray.push(start._d);
+      }
+      return this.getDateDifference(
+        start.clone().add(1, 'day'),
+        end,
+        datesArray
+      );
+    }
+    return datesArray;
+  };
+
   handleOnValueChange = (props, changedValues, allValues) => {
     const form = this.formRef;
 
@@ -54,9 +70,15 @@ class DayOff extends Component {
       const end = moment(allValues.endDate._d);
 
       const calcDuration = moment.duration(end.diff(start));
-      const duration = `${Number(calcDuration._data.days) + 1} Day(s)`;
-      if (calcDuration._data.days > 0) {
-        form.setFields({ duration: { value: duration } });
+      // console.log(this.getDateDifference(start, end));
+
+      const duration = this.getDateDifference(start, end).length;
+      const durationText = `${
+        this.getDateDifference(start, end).length
+      } Day(s)`;
+
+      if (duration > 0) {
+        form.setFields({ duration: { value: durationText } });
       } else {
         Antd_Message.error(`Negative duration is not allowed`);
         form.setFields({
@@ -65,7 +87,7 @@ class DayOff extends Component {
             errors: [
               {
                 required: true,
-                message: 'Please select the date',
+                message: 'Please select a proper date range',
               },
             ],
           },
@@ -83,7 +105,6 @@ class DayOff extends Component {
         const values = {
           ...fieldsValue,
         };
-        console.log(values);
         const response = await this.props.createDayOffMutation({
           variables: {
             startDate: values.startDate,
@@ -99,14 +120,14 @@ class DayOff extends Component {
         });
         const { ok, errors } = response.data.createDayOff;
         this.setState({ isLoading: false, errors: errors });
-        console.log(response);
+
         if (errors) {
-          Antd_Message.error(errors.message);
+          return Antd_Message.error(errors.message);
         }
 
         if (ok) {
           Antd_Message.success('New entry has been added');
-          this.onFormClose();
+          return this.onFormClose();
         }
       }
     });
@@ -119,24 +140,21 @@ class DayOff extends Component {
       okType: 'danger',
       centered: true,
       onOk: async () => {
-        await this.props
-          .deleteDayOffMutation({
-            variables: {
-              id: record._id,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.deleteDayOff;
-            if (errors) {
-              Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              Antd_Message.success('Entry has been deleted');
-            }
-          });
+        const response = await this.props.deleteDayOffMutation({
+          variables: {
+            id: record._id,
+          },
+          refetchQueries: [
+            { query: fetchUserData, variables: { id: this.props.userId } },
+          ],
+        });
+        const { ok, errors } = response.data.deleteDayOff;
+        if (errors) {
+          return Antd_Message.error(errors.message);
+        }
+        if (ok) {
+          return Antd_Message.success('Entry has been deleted');
+        }
       },
     });
   };
@@ -149,28 +167,22 @@ class DayOff extends Component {
       okType: 'primary',
       centered: true,
       onOk: async () => {
-        await this.props
-          .updateDayOffMutation({
-            variables: {
-              id: record._id,
-              status: status,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.updateDayOff;
-
-            console.log(response.data.updateDayOff);
-
-            if (errors) {
-              Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              Antd_Message.success(`Entry has been ${status}`);
-            }
-          });
+        const response = await this.props.updateDayOffMutation({
+          variables: {
+            id: record._id,
+            status: status,
+          },
+          refetchQueries: [
+            { query: fetchUserData, variables: { id: this.props.userId } },
+          ],
+        });
+        const { ok, errors } = response.data.updateDayOff;
+        if (errors) {
+          return Antd_Message.error(errors.message);
+        }
+        if (ok) {
+          return Antd_Message.success(`Entry has been ${status}`);
+        }
       },
     });
   };
@@ -188,25 +200,34 @@ class DayOff extends Component {
   };
 
   render() {
-    const { formVisible } = this.state;
+    console.log(this.props);
+
+    let { formVisible } = this.state;
+
     const { loading } = this.props.data;
 
-    const { users } = this.props;
+    const { users, data } = this.props;
 
     // TRANSFORM USERS TO BE POPULATED IN APPROVERS DROPDOWN
     let ApproverOptions;
     if (users) {
-      ApproverOptions = users.map(user => {
-        const suffix = user.suffix || '';
-        return (
-          <Antd_Select.Option key={user._id}>{`${user.firstName} ${
-            user.lastName
+      ApproverOptions =
+        users &&
+        users.map(user => {
+          const suffix = user.suffix || '';
+          return (
+            <Antd_Select.Option key={user._id}>{`${user.firstName} ${
+              user.lastName
             } ${suffix}`}</Antd_Select.Option>
-        );
-      });
+          );
+        }) &&
+        'users';
     }
 
-    let MyTableData, MyTableDataTotal, AssignedTableData, AssignedTableDataTotal = 0;
+    let MyTableData,
+      MyTableDataTotal,
+      AssignedTableData,
+      AssignedTableDataTotal = 0;
     // console.log(this.props);
     if (!loading) {
       const createdDayOffs =
@@ -217,16 +238,15 @@ class DayOff extends Component {
           return {
             ...dayoff,
             key: dayoff._id,
-            startDate: moment(dayoff.startDate, 'x').format('MM/DD/YYYY'),
-            endDate: moment(dayoff.endDate, 'x').format('MM/DD/YYYY'),
+            startDate: moment(dayoff.startDate).format('MM/DD/YYYY'),
+            endDate: moment(dayoff.endDate).format('MM/DD/YYYY'),
             approver: `${dayoff.approver.firstName} ${
               dayoff.approver.lastName
-              } ${suffix}`,
+            } ${suffix}`,
           };
         });
-        MyTableDataTotal = MyTableData.length
+        MyTableDataTotal = MyTableData.length;
       }
-
 
       const assignedDayoffs =
         this.props.data.fetchUser.user.assignedDayOffs || [];
@@ -236,16 +256,15 @@ class DayOff extends Component {
           return {
             ...assignedDayoff,
             key: assignedDayoff._id,
-            startDate: moment(assignedDayoff.startDate, 'x').format(
-              'MM/DD/YYYY'
-            ),
-            endDate: moment(assignedDayoff.endDate, 'x').format('MM/DD/YYYY'),
+            startDate: moment(assignedDayoff.startDate).format('MM/DD/YYYY'),
+            endDate: moment(assignedDayoff.endDate).format('MM/DD/YYYY'),
             name: `${assignedDayoff.creator.firstName} ${
               assignedDayoff.creator.lastName
-              } ${suffix}`,
+            } ${suffix}`,
           };
         });
-        AssignedTableDataTotal = AssignedTableData.length
+
+        AssignedTableDataTotal = AssignedTableData.length;
       }
     }
 
@@ -482,26 +501,31 @@ class DayOff extends Component {
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            {AssignedTableDataTotal > 0 ? (<SUI_Grid columns="equal" verticalAlign="middle">
-              <SUI_Grid.Row>
-                <SUI_Grid.Column>
-                  <SUI_Header as="h3" color="grey">
-                    <SUI_Header.Content>For My Approval :</SUI_Header.Content>
-                  </SUI_Header>
-                </SUI_Grid.Column>
-              </SUI_Grid.Row>
-              <SUI_Grid.Row>
-                <SUI_Grid.Column>
-                  <Antd_Table
-                    bordered
-                    columns={MyApprovalColumns}
-                    dataSource={AssignedTableData}
-                    size="small"
-                    pagination={{ defaultPageSize: 5, total: AssignedTableDataTotal }}
-                  />
-                </SUI_Grid.Column>
-              </SUI_Grid.Row>
-            </SUI_Grid>) : null}
+            {AssignedTableDataTotal > 0 ? (
+              <SUI_Grid columns="equal" verticalAlign="middle">
+                <SUI_Grid.Row>
+                  <SUI_Grid.Column>
+                    <SUI_Header as="h3" color="grey">
+                      <SUI_Header.Content>For My Approval :</SUI_Header.Content>
+                    </SUI_Header>
+                  </SUI_Grid.Column>
+                </SUI_Grid.Row>
+                <SUI_Grid.Row>
+                  <SUI_Grid.Column>
+                    <Antd_Table
+                      bordered
+                      columns={MyApprovalColumns}
+                      dataSource={AssignedTableData}
+                      size="small"
+                      pagination={{
+                        defaultPageSize: 5,
+                        total: AssignedTableDataTotal,
+                      }}
+                    />
+                  </SUI_Grid.Column>
+                </SUI_Grid.Row>
+              </SUI_Grid>
+            ) : null}
           </SUI_Segment>
           <DayOffForm
             formVisible={formVisible}

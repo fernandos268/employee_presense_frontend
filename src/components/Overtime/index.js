@@ -70,7 +70,7 @@ class Overtime extends Component {
       const calcDuration = moment.duration(end.diff(start));
       const duration = `${calcDuration._data.hours} Hr & ${
         calcDuration._data.minutes
-        } Min`;
+      } Min`;
 
       if (calcDuration._milliseconds > 0) {
         // return this.setState({ duration })
@@ -122,12 +122,12 @@ class Overtime extends Component {
         this.setState({ isLoading: false, errors: errors });
         console.log(response);
         if (errors) {
-          Antd_Message.error(errors.message);
+          return Antd_Message.error(errors.message);
         }
 
         if (ok) {
           Antd_Message.success('New entry has been added');
-          this.onFormClose();
+          return this.onFormClose();
         }
       }
     });
@@ -140,24 +140,21 @@ class Overtime extends Component {
       okType: 'danger',
       centered: true,
       onOk: async () => {
-        await this.props
-          .deleteOvertimeMutation({
-            variables: {
-              id: record._id,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.deleteOvertime;
-            if (errors) {
-              Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              Antd_Message.success('Entry has been deleted');
-            }
-          });
+        const response = await this.props.deleteOvertimeMutation({
+          variables: {
+            id: record._id,
+          },
+          refetchQueries: [
+            { query: fetchUserData, variables: { id: this.props.userId } },
+          ],
+        });
+        const { ok, errors } = response.data.deleteOvertime;
+        if (errors) {
+          return Antd_Message.error(errors.message);
+        }
+        if (ok) {
+          return Antd_Message.success('Entry has been deleted');
+        }
       },
     });
   };
@@ -170,28 +167,22 @@ class Overtime extends Component {
       okType: 'primary',
       centered: true,
       onOk: async () => {
-        await this.props
-          .updateOvertimeMutation({
-            variables: {
-              id: record._id,
-              status: status,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.updateOvertime;
-
-            console.log(response.data.updateOvertime);
-
-            if (errors) {
-              Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              Antd_Message.success(`Entry has been ${status}`);
-            }
-          });
+        const response = await this.props.updateOvertimeMutation({
+          variables: {
+            id: record._id,
+            status: status,
+          },
+          refetchQueries: [
+            { query: fetchUserData, variables: { id: this.props.userId } },
+          ],
+        });
+        const { ok, errors } = response.data.updateOvertime;
+        if (errors) {
+          return Antd_Message.error(errors.message);
+        }
+        if (ok) {
+          return Antd_Message.success(`Entry has been ${status}`);
+        }
       },
     });
   };
@@ -213,12 +204,15 @@ class Overtime extends Component {
         return (
           <Antd_Select.Option key={user._id}>{`${user.firstName} ${
             user.lastName
-            } ${suffix}`}</Antd_Select.Option>
+          } ${suffix}`}</Antd_Select.Option>
         );
       });
     }
 
-    let MyTableData, MyTableDataTotal, AssignedTableData, AssignedTableDataTotal = 0;
+    let MyTableData,
+      MyTableDataTotal,
+      AssignedTableData,
+      AssignedTableDataTotal = 0;
     if (!loading) {
       const overtimes = this.props.data.fetchUser.user.createdOvertimes || [];
       if (overtimes) {
@@ -227,16 +221,16 @@ class Overtime extends Component {
           return {
             ...overtime,
             key: overtime._id,
-            date: moment(overtime.date, 'x').format('MM/DD/YYYY'),
+            date: moment(overtime.date).format('MM/DD/YYYY'),
             timeWorked: `${overtime.startTime} - ${overtime.endTime}`,
             duration: overtime.duration,
             approver: `${overtime.approver.firstName} ${
               overtime.approver.lastName
-              } ${suffix}`,
+            } ${suffix}`,
             status: overtime.status,
           };
         });
-        MyTableDataTotal = MyTableData.length
+        MyTableDataTotal = MyTableData.length;
       }
 
       const assignedOvertimes =
@@ -247,18 +241,18 @@ class Overtime extends Component {
           return {
             ...assignedOvertime,
             key: assignedOvertime._id,
-            date: moment(assignedOvertime.date, 'x').format('MM/DD/YYYY'),
+            date: moment(assignedOvertime.date).format('MM/DD/YYYY'),
             timeWorked: `${assignedOvertime.startTime} - ${
               assignedOvertime.endTime
-              }`,
+            }`,
             duration: assignedOvertime.duration,
             status: assignedOvertime.status,
             name: `${assignedOvertime.creator.firstName} ${
               assignedOvertime.creator.lastName
-              } ${suffix}`,
+            } ${suffix}`,
           };
         });
-        AssignedTableDataTotal = AssignedTableData.length
+        AssignedTableDataTotal = AssignedTableData.length;
       }
     }
 
@@ -494,26 +488,31 @@ class Overtime extends Component {
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            {AssignedTableDataTotal > 0 ? (<SUI_Grid columns="equal" verticalAlign="middle">
-              <SUI_Grid.Row>
-                <SUI_Grid.Column>
-                  <SUI_Header as="h3" color="grey">
-                    <SUI_Header.Content>For My Approval :</SUI_Header.Content>
-                  </SUI_Header>
-                </SUI_Grid.Column>
-              </SUI_Grid.Row>
-              <SUI_Grid.Row>
-                <SUI_Grid.Column>
-                  <Antd_Table
-                    bordered
-                    columns={MyApprovalColumns}
-                    dataSource={AssignedTableData}
-                    size="small"
-                    pagination={{ defaultPageSize: 5, total: AssignedTableDataTotal }}
-                  />
-                </SUI_Grid.Column>
-              </SUI_Grid.Row>
-            </SUI_Grid>) : null}
+            {AssignedTableDataTotal > 0 ? (
+              <SUI_Grid columns="equal" verticalAlign="middle">
+                <SUI_Grid.Row>
+                  <SUI_Grid.Column>
+                    <SUI_Header as="h3" color="grey">
+                      <SUI_Header.Content>For My Approval :</SUI_Header.Content>
+                    </SUI_Header>
+                  </SUI_Grid.Column>
+                </SUI_Grid.Row>
+                <SUI_Grid.Row>
+                  <SUI_Grid.Column>
+                    <Antd_Table
+                      bordered
+                      columns={MyApprovalColumns}
+                      dataSource={AssignedTableData}
+                      size="small"
+                      pagination={{
+                        defaultPageSize: 5,
+                        total: AssignedTableDataTotal,
+                      }}
+                    />
+                  </SUI_Grid.Column>
+                </SUI_Grid.Row>
+              </SUI_Grid>
+            ) : null}
           </SUI_Segment>
           <OvertimeForm
             formVisible={formVisible}

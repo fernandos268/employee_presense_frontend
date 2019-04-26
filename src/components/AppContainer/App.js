@@ -108,7 +108,11 @@ class App extends Component {
             <SUI_Segment basic padded style={{}}>
               <SUI_Segment basic>
                 <Switch>
-                  <Route exact path="/" component={() => <Home userId={userId} />} />
+                  <Route
+                    exact
+                    path="/"
+                    component={() => <Home userId={userId} />}
+                  />
                   <Route
                     path="/overtime"
                     component={() => (
