@@ -1,9 +1,25 @@
+import {
+  Button as Antd_Button,
+  Divider as Antd_Divider,
+  message as Antd_Message,
+  Modal as Antd_Modal,
+  Row as Antd_Row,
+  Select as Antd_Select,
+  Spin as Antd_Spin,
+  Table as Antd_Table,
+} from 'antd';
+import moment from 'moment';
 import React, { Component, createRef } from 'react';
 
-import moment from 'moment';
-
 // GraphQL
-import { graphql, compose } from 'react-apollo';
+import { compose, graphql } from 'react-apollo';
+
+// External Library Components Imports --------------------
+import {
+  Grid as SUI_Grid,
+  Header as SUI_Header,
+  Segment as SUI_Segment,
+} from 'semantic-ui-react';
 import {
   createOvertimeMutation,
   deleteOvertimeMutation,
@@ -11,28 +27,10 @@ import {
 } from '../Graphql/mutations';
 import { fetchUserData } from '../Graphql/queries';
 
-// External Library Components Imports --------------------
-import {
-  Grid as SUI_Grid,
-  Segment as SUI_Segment,
-  Header as SUI_Header,
-} from 'semantic-ui-react';
-import {
-  Table as Antd_Table,
-  Tag as Antd_Tag,
-  Row as Antd_Row,
-  Button as Antd_Button,
-  message as Antd_Message,
-  Icon as Antd_Icon,
-  Spin as Antd_Spin,
-  Modal as Antd_Modal,
-  Select as Antd_Select,
-  Divider as Antd_Divider,
-  Tooltip as Antd_Tooltip,
-} from 'antd';
-
 // Component Imports -------------------------------------
 import OvertimeForm from './OvertimeForm';
+import { MyApprovalColumns, MyTableColumns } from './OvertimeTableColumns';
+import { TransformTableData } from './TransformTableData';
 
 class Overtime extends Component {
   constructor(props) {
@@ -103,7 +101,6 @@ class Overtime extends Component {
           timeStarted: fieldsValue['timeStarted'].format('HH:mm'),
           timeEnded: fieldsValue['timeEnded'].format('HH:mm'),
         };
-        console.log(values);
         const response = await this.props.createOvertimeMutation({
           variables: {
             date: values.date.toISOString(),
@@ -120,7 +117,6 @@ class Overtime extends Component {
         });
         const { ok, errors } = response.data.createOvertime;
         this.setState({ isLoading: false, errors: errors });
-        console.log(response);
         if (errors) {
           return Antd_Message.error(errors.message);
         }
@@ -139,22 +135,25 @@ class Overtime extends Component {
       okText: 'Yes',
       okType: 'danger',
       centered: true,
-      onOk: async () => {
-        const response = await this.props.deleteOvertimeMutation({
-          variables: {
-            id: record._id,
-          },
-          refetchQueries: [
-            { query: fetchUserData, variables: { id: this.props.userId } },
-          ],
-        });
-        const { ok, errors } = response.data.deleteOvertime;
-        if (errors) {
-          return Antd_Message.error(errors.message);
-        }
-        if (ok) {
-          return Antd_Message.success('Entry has been deleted');
-        }
+      onOk: () => {
+        return this.props
+          .deleteOvertimeMutation({
+            variables: {
+              id: record._id,
+            },
+            refetchQueries: [
+              { query: fetchUserData, variables: { id: this.props.userId } },
+            ],
+          })
+          .then(response => {
+            const { ok, errors } = response.data.deleteOvertime;
+            if (errors) {
+              return Antd_Message.error(errors.message);
+            }
+            if (ok) {
+              return Antd_Message.success('Entry has been deleted');
+            }
+          });
       },
     });
   };
@@ -166,23 +165,26 @@ class Overtime extends Component {
       okText: 'Yes',
       okType: 'primary',
       centered: true,
-      onOk: async () => {
-        const response = await this.props.updateOvertimeMutation({
-          variables: {
-            id: record._id,
-            status: status,
-          },
-          refetchQueries: [
-            { query: fetchUserData, variables: { id: this.props.userId } },
-          ],
-        });
-        const { ok, errors } = response.data.updateOvertime;
-        if (errors) {
-          return Antd_Message.error(errors.message);
-        }
-        if (ok) {
-          return Antd_Message.success(`Entry has been ${status}`);
-        }
+      onOk: () => {
+        return this.props
+          .updateOvertimeMutation({
+            variables: {
+              id: record._id,
+              status: status,
+            },
+            refetchQueries: [
+              { query: fetchUserData, variables: { id: this.props.userId } },
+            ],
+          })
+          .then(response => {
+            const { ok, errors } = response.data.updateOvertime;
+            if (errors) {
+              return Antd_Message.error(errors.message);
+            }
+            if (ok) {
+              return Antd_Message.success(`Entry has been ${status}`);
+            }
+          });
       },
     });
   };
@@ -194,9 +196,12 @@ class Overtime extends Component {
   render() {
     const { formVisible } = this.state;
     const { loading } = this.props.data;
-
     const { users } = this.props;
 
+    let MyOvertimes,
+      MyAssignedOvertimes = [];
+
+    // TRANSFORM USERS TO BE POPULATED IN APPROVERS DROPDOWN
     let ApproverOptions;
     if (users) {
       ApproverOptions = users.map(user => {
@@ -209,241 +214,16 @@ class Overtime extends Component {
       });
     }
 
-    let MyTableData,
-      MyTableDataTotal,
-      AssignedTableData,
-      AssignedTableDataTotal = 0;
     if (!loading) {
-      const overtimes = this.props.data.fetchUser.user.createdOvertimes || [];
-      if (overtimes) {
-        MyTableData = overtimes.map(overtime => {
-          const suffix = overtime.approver.suffix || '';
-          return {
-            ...overtime,
-            key: overtime._id,
-            date: moment(overtime.date).format('MM/DD/YYYY'),
-            timeWorked: `${overtime.startTime} - ${overtime.endTime}`,
-            duration: overtime.duration,
-            approver: `${overtime.approver.firstName} ${
-              overtime.approver.lastName
-            } ${suffix}`,
-            status: overtime.status,
-          };
-        });
-        MyTableDataTotal = MyTableData.length;
-      }
-
-      const assignedOvertimes =
-        this.props.data.fetchUser.user.assignedOvertimes || [];
-      if (assignedOvertimes) {
-        AssignedTableData = assignedOvertimes.map(assignedOvertime => {
-          const suffix = assignedOvertime.creator.suffix || '';
-          return {
-            ...assignedOvertime,
-            key: assignedOvertime._id,
-            date: moment(assignedOvertime.date).format('MM/DD/YYYY'),
-            timeWorked: `${assignedOvertime.startTime} - ${
-              assignedOvertime.endTime
-            }`,
-            duration: assignedOvertime.duration,
-            status: assignedOvertime.status,
-            name: `${assignedOvertime.creator.firstName} ${
-              assignedOvertime.creator.lastName
-            } ${suffix}`,
-          };
-        });
-        AssignedTableDataTotal = AssignedTableData.length;
-      }
+      MyOvertimes = TransformTableData(
+        this.props.data.fetchUser.user.createdOvertimes,
+        'MyTableData'
+      );
+      MyAssignedOvertimes = TransformTableData(
+        this.props.data.fetchUser.user.assignedOvertimes,
+        'AssignedTableData'
+      );
     }
-
-    const MyTableColumns = [
-      {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-      },
-      {
-        title: 'Time Worked',
-        dataIndex: 'timeWorked',
-        key: 'time',
-        align: 'center',
-      },
-      {
-        title: 'Duration',
-        dataIndex: 'duration',
-        key: 'duration',
-        align: 'center',
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: 'Approver',
-        dataIndex: 'approver',
-        key: 'approver',
-      },
-      {
-        title: 'Status',
-        key: 'status',
-        dataIndex: 'status',
-        align: 'center',
-        render: status => {
-          let color = '';
-          switch (status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          return (
-            <span>
-              <Antd_Tag color={color}>{status.toUpperCase()}</Antd_Tag>
-            </span>
-          );
-        },
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        align: 'center',
-        render: (text, record) => (
-          <span>
-            <Antd_Tooltip placement="left" title="Cancel">
-              <Antd_Button
-                shape="circle"
-                type="danger"
-                ghost
-                icon="close"
-                onClick={this.handleDelete.bind(this, record)}
-              />
-            </Antd_Tooltip>
-          </span>
-        ),
-      },
-    ];
-
-    const MyApprovalColumns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-        align: 'center',
-      },
-      {
-        title: 'Time Worked',
-        dataIndex: 'timeWorked',
-        key: 'time',
-        align: 'center',
-      },
-      {
-        title: 'Duration',
-        dataIndex: 'duration',
-        key: 'duration',
-        align: 'center',
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: 'Status',
-        key: 'status',
-        dataIndex: 'status',
-        align: 'center',
-        render: status => {
-          let color = '';
-          switch (status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          return (
-            <span>
-              <Antd_Tag color={color}>{status.toUpperCase()}</Antd_Tag>
-            </span>
-          );
-        },
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        colSpan: 1,
-        align: 'center',
-        render: (text, record) => {
-          let color = '';
-          switch (record.status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          if (record.status === 'Pending' || record.status === 'Rejected') {
-            return (
-              <span>
-                <Antd_Tooltip placement="left" title="Approve">
-                  <Antd_Button
-                    shape="circle"
-                    icon="like"
-                    type="primary"
-                    ghost
-                    onClick={this.handleApproveReject.bind(
-                      this,
-                      record,
-                      'Approved'
-                    )}
-                  />
-                </Antd_Tooltip>
-                <Antd_Divider type="vertical" />
-                <Antd_Tooltip placement="left" title="Reject">
-                  <Antd_Button
-                    shape="circle"
-                    icon="dislike"
-                    type="danger"
-                    ghost
-                    onClick={this.handleApproveReject.bind(
-                      this,
-                      record,
-                      'Rejected'
-                    )}
-                  />
-                </Antd_Tooltip>
-              </span>
-            );
-          }
-          return <label>N/A</label>;
-        },
-      },
-    ];
 
     return (
       <div
@@ -479,40 +259,33 @@ class Overtime extends Component {
                 <SUI_Grid.Column>
                   <Antd_Table
                     bordered
-                    columns={MyTableColumns}
-                    dataSource={MyTableData}
+                    columns={MyTableColumns(this.handleDelete)}
+                    dataSource={MyOvertimes}
                     size="small"
-                    pagination={{ defaultPageSize: 5, total: MyTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            {AssignedTableDataTotal > 0 ? (
-              <SUI_Grid columns="equal" verticalAlign="middle">
-                <SUI_Grid.Row>
-                  <SUI_Grid.Column>
-                    <SUI_Header as="h3" color="grey">
-                      <SUI_Header.Content>For My Approval :</SUI_Header.Content>
-                    </SUI_Header>
-                  </SUI_Grid.Column>
-                </SUI_Grid.Row>
-                <SUI_Grid.Row>
-                  <SUI_Grid.Column>
-                    <Antd_Table
-                      bordered
-                      columns={MyApprovalColumns}
-                      dataSource={AssignedTableData}
-                      size="small"
-                      pagination={{
-                        defaultPageSize: 5,
-                        total: AssignedTableDataTotal,
-                      }}
-                    />
-                  </SUI_Grid.Column>
-                </SUI_Grid.Row>
-              </SUI_Grid>
-            ) : null}
+            <SUI_Grid columns="equal" verticalAlign="middle">
+              <SUI_Grid.Row>
+                <SUI_Grid.Column>
+                  <SUI_Header as="h3" color="grey">
+                    <SUI_Header.Content>For My Approval :</SUI_Header.Content>
+                  </SUI_Header>
+                </SUI_Grid.Column>
+              </SUI_Grid.Row>
+              <SUI_Grid.Row>
+                <SUI_Grid.Column>
+                  <Antd_Table
+                    bordered
+                    columns={MyApprovalColumns(this.handleApproveReject)}
+                    dataSource={MyAssignedOvertimes}
+                    size="small"
+                  />
+                </SUI_Grid.Column>
+              </SUI_Grid.Row>
+            </SUI_Grid>
           </SUI_Segment>
           <OvertimeForm
             formVisible={formVisible}

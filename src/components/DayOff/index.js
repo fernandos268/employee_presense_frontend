@@ -1,10 +1,25 @@
-import React, { Component, createRef } from 'react';
-
+import {
+  Button as Antd_Button,
+  Divider as Antd_Divider,
+  message as Antd_Message,
+  Modal as Antd_Modal,
+  Row as Antd_Row,
+  Select as Antd_Select,
+  Spin as Antd_Spin,
+  Table as Antd_Table,
+} from 'antd';
 import moment from 'moment';
+import React, { Component } from 'react';
 
 // GraphQL
-import { graphql, compose } from 'react-apollo';
+import { compose, graphql } from 'react-apollo';
 
+// External Library Components Imports --------------------
+import {
+  Grid as SUI_Grid,
+  Header as SUI_Header,
+  Segment as SUI_Segment,
+} from 'semantic-ui-react';
 import {
   createDayOffMutation,
   deleteDayOffMutation,
@@ -12,28 +27,10 @@ import {
 } from '../Graphql/mutations';
 import { fetchUserData } from '../Graphql/queries';
 
-// External Library Components Imports --------------------
-import {
-  Grid as SUI_Grid,
-  Segment as SUI_Segment,
-  Header as SUI_Header,
-} from 'semantic-ui-react';
-import {
-  Table as Antd_Table,
-  Tag as Antd_Tag,
-  Row as Antd_Row,
-  Button as Antd_Button,
-  message as Antd_Message,
-  Icon as Antd_Icon,
-  Spin as Antd_Spin,
-  Modal as Antd_Modal,
-  Select as Antd_Select,
-  Divider as Antd_Divider,
-  Tooltip as Antd_Tooltip,
-} from 'antd';
-
 // Component Imports -------------------------------------
 import DayOffForm from './DayOffForm';
+import { MyApprovalColumns, MytableColumns } from './DayoffTableColumns';
+import TransformTableData from './TransformTableData';
 
 class DayOff extends Component {
   constructor() {
@@ -200,263 +197,37 @@ class DayOff extends Component {
   };
 
   render() {
-    console.log(this.props);
-
     let { formVisible } = this.state;
-
     const { loading } = this.props.data;
-
     const { users, data } = this.props;
+
+    let MyDayoffs,
+      MyAssignedDayoffs = [];
 
     // TRANSFORM USERS TO BE POPULATED IN APPROVERS DROPDOWN
     let ApproverOptions;
     if (users) {
-      ApproverOptions =
-        users &&
-        users.map(user => {
-          const suffix = user.suffix || '';
-          return (
-            <Antd_Select.Option key={user._id}>{`${user.firstName} ${
-              user.lastName
-            } ${suffix}`}</Antd_Select.Option>
-          );
-        }) &&
-        'users';
+      ApproverOptions = users.map(user => {
+        const suffix = user.suffix || '';
+        return (
+          <Antd_Select.Option key={user._id}>{`${user.firstName} ${
+            user.lastName
+          } ${suffix}`}</Antd_Select.Option>
+        );
+      });
     }
 
-    let MyTableData,
-      MyTableDataTotal,
-      AssignedTableData,
-      AssignedTableDataTotal = 0;
-    // console.log(this.props);
     if (!loading) {
-      const createdDayOffs =
-        this.props.data.fetchUser.user.createdDayOffs || [];
-      if (createdDayOffs) {
-        MyTableData = createdDayOffs.map(dayoff => {
-          const suffix = dayoff.approver.suffix || '';
-          return {
-            ...dayoff,
-            key: dayoff._id,
-            startDate: moment(dayoff.startDate).format('MM/DD/YYYY'),
-            endDate: moment(dayoff.endDate).format('MM/DD/YYYY'),
-            approver: `${dayoff.approver.firstName} ${
-              dayoff.approver.lastName
-            } ${suffix}`,
-          };
-        });
-        MyTableDataTotal = MyTableData.length;
-      }
+      MyDayoffs = TransformTableData(
+        this.props.data.fetchUser.user.createdDayOffs,
+        'MyTableData'
+      );
 
-      const assignedDayoffs =
-        this.props.data.fetchUser.user.assignedDayOffs || [];
-      if (assignedDayoffs) {
-        AssignedTableData = assignedDayoffs.map(assignedDayoff => {
-          const suffix = assignedDayoff.creator.suffix || '';
-          return {
-            ...assignedDayoff,
-            key: assignedDayoff._id,
-            startDate: moment(assignedDayoff.startDate).format('MM/DD/YYYY'),
-            endDate: moment(assignedDayoff.endDate).format('MM/DD/YYYY'),
-            name: `${assignedDayoff.creator.firstName} ${
-              assignedDayoff.creator.lastName
-            } ${suffix}`,
-          };
-        });
-
-        AssignedTableDataTotal = AssignedTableData.length;
-      }
+      MyAssignedDayoffs = TransformTableData(
+        this.props.data.fetchUser.user.assignedDayOffs,
+        'AssignedTableData'
+      );
     }
-
-    const MyTableColumns = [
-      {
-        title: 'Start Date',
-        dataIndex: 'startDate',
-        key: 'startDate',
-        align: 'center',
-      },
-      {
-        title: 'End Date ',
-        dataIndex: 'endDate',
-        key: 'endDate',
-        align: 'center',
-      },
-      {
-        title: 'Duration',
-        dataIndex: 'duration',
-        key: 'duration',
-        align: 'center',
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: 'Approver',
-        dataIndex: 'approver',
-        key: 'approver',
-      },
-      {
-        title: 'Status',
-        key: 'status',
-        dataIndex: 'status',
-        align: 'center',
-        render: status => {
-          let color = '';
-          switch (status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          return (
-            <span>
-              <Antd_Tag color={color}>{status.toUpperCase()}</Antd_Tag>
-            </span>
-          );
-        },
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        align: 'center',
-        render: (text, record) => (
-          <span>
-            <Antd_Tooltip placement="left" title="Delete">
-              <Antd_Button
-                shape="circle"
-                type="danger"
-                ghost
-                icon="delete"
-                onClick={this.handleDelete.bind(this, record)}
-              />
-            </Antd_Tooltip>
-          </span>
-        ),
-      },
-    ];
-
-    const MyApprovalColumns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
-        title: 'Start Date',
-        dataIndex: 'startDate',
-        key: 'startDate',
-        align: 'center',
-      },
-      {
-        title: 'End Date ',
-        dataIndex: 'endDate',
-        key: 'endDate',
-        align: 'center',
-      },
-      {
-        title: 'Duration',
-        dataIndex: 'duration',
-        key: 'duration',
-        align: 'center',
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: 'Status',
-        key: 'status',
-        dataIndex: 'status',
-        align: 'center',
-        render: status => {
-          let color = '';
-          switch (status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          return (
-            <span>
-              <Antd_Tag color={color}>{status.toUpperCase()}</Antd_Tag>
-            </span>
-          );
-        },
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        colSpan: 1,
-        align: 'center',
-        render: (text, record) => {
-          let color = '';
-          switch (record.status) {
-            case 'Pending':
-              color = 'blue';
-              break;
-            case 'Approved':
-              color = 'green';
-              break;
-            case 'Rejected':
-              color = 'red';
-              break;
-            default:
-              color = 'blue';
-          }
-          if (record.status === 'Pending' || record.status === 'Rejected') {
-            return (
-              <span>
-                <Antd_Tooltip placement="left" title="Approve">
-                  <Antd_Button
-                    shape="circle"
-                    icon="like"
-                    type="primary"
-                    ghost
-                    onClick={this.handleApproveReject.bind(
-                      this,
-                      record,
-                      'Approved'
-                    )}
-                  />
-                </Antd_Tooltip>
-                <Antd_Divider type="vertical" />
-                <Antd_Tooltip placement="left" title="Reject">
-                  <Antd_Button
-                    shape="circle"
-                    icon="dislike"
-                    type="danger"
-                    ghost
-                    onClick={this.handleApproveReject.bind(
-                      this,
-                      record,
-                      'Rejected'
-                    )}
-                  />
-                </Antd_Tooltip>
-              </span>
-            );
-          }
-          return <label>N/A</label>;
-        },
-      },
-    ];
 
     return (
       <div
@@ -492,40 +263,33 @@ class DayOff extends Component {
                 <SUI_Grid.Column>
                   <Antd_Table
                     bordered
-                    columns={MyTableColumns}
-                    dataSource={MyTableData}
+                    columns={MytableColumns(this.handleDelete)}
+                    dataSource={MyDayoffs}
                     size="small"
-                    pagination={{ defaultPageSize: 5, total: MyTableDataTotal }}
                   />
                 </SUI_Grid.Column>
               </SUI_Grid.Row>
             </SUI_Grid>
             <Antd_Divider />
-            {AssignedTableDataTotal > 0 ? (
-              <SUI_Grid columns="equal" verticalAlign="middle">
-                <SUI_Grid.Row>
-                  <SUI_Grid.Column>
-                    <SUI_Header as="h3" color="grey">
-                      <SUI_Header.Content>For My Approval :</SUI_Header.Content>
-                    </SUI_Header>
-                  </SUI_Grid.Column>
-                </SUI_Grid.Row>
-                <SUI_Grid.Row>
-                  <SUI_Grid.Column>
-                    <Antd_Table
-                      bordered
-                      columns={MyApprovalColumns}
-                      dataSource={AssignedTableData}
-                      size="small"
-                      pagination={{
-                        defaultPageSize: 5,
-                        total: AssignedTableDataTotal,
-                      }}
-                    />
-                  </SUI_Grid.Column>
-                </SUI_Grid.Row>
-              </SUI_Grid>
-            ) : null}
+            <SUI_Grid columns="equal" verticalAlign="middle">
+              <SUI_Grid.Row>
+                <SUI_Grid.Column>
+                  <SUI_Header as="h3" color="grey">
+                    <SUI_Header.Content>For My Approval :</SUI_Header.Content>
+                  </SUI_Header>
+                </SUI_Grid.Column>
+              </SUI_Grid.Row>
+              <SUI_Grid.Row>
+                <SUI_Grid.Column>
+                  <Antd_Table
+                    bordered
+                    columns={MyApprovalColumns(this.handleApproveReject)}
+                    dataSource={MyAssignedDayoffs}
+                    size="small"
+                  />
+                </SUI_Grid.Column>
+              </SUI_Grid.Row>
+            </SUI_Grid>
           </SUI_Segment>
           <DayOffForm
             formVisible={formVisible}

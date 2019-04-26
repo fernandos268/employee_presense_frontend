@@ -18,7 +18,7 @@ NOTE:
     --> a module bundler.
     --> Bundling process: 
         1. Entry: evaluates entry matches based on loader config
-        2. Loaders: resolves against any file type.
+        2. Loaders: resolves against any file type such as (.JS / .JSX / .SVG / .PNG / etc..).
         3. Plugins: intercept runtime.
         4. Output: what the result file will be specified.
         3. devServer: to add development convenience configs.
@@ -34,24 +34,25 @@ NOTE:
 
 
 4. async & await
+    --> allowing us to write completely synchronous-looking code while performing asynchronous tasks behind     the scenes.
     --> async: an async function returns a promise, to perform a non-blocking process.
     --> await: only works inside the async function, to wait for a promise to be settled and returns its result.
+    
 
 5. Shallow vs Deep Object Copy
     --> Shallow: Copies the memory allocation of the copied object,
     --> Deep: Copies all the values of a object and gets it's own memory allocation.
 
-5. redux
+6. redux
     -->
 
-
-4. react lifecycle
+7. react lifecycle
     -->
 
-4. Key prop in mapped list:
+8. Key prop in mapped list:
     --> Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements inside the array to give the elements a stable identity:
 
-6. create a module with the following requirements:
+9. create a module with the following requirements:
     ⭕ CRUD for Data
     ⭕ Sort data
     ⭕ Arrow Functions (if applicable)
