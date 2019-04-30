@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -28,6 +27,11 @@ import { isLoggedIn, removeToken } from '../Auth/Auth';
 import { graphql, compose } from 'react-apollo';
 import { fetchUsers } from '../Graphql/queries';
 
+// Redux functions
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestAllUsers } from '../../redux/actions';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -36,16 +40,8 @@ class App extends Component {
     };
   }
 
-  // FetchGithubUsers = () => {
-  //   axios.get('https://api.github.com/users?page=3&per_page=100').then(resp => {
-  //     console.log(resp.data);
-  //     this.setState({ users: resp.data });
-  //   });
-  // };
-
   handleMenuItemClick = e => {
     const activeMenuItem = e.target.id;
-
     if (activeMenuItem !== 'signout') {
       if (activeMenuItem !== this.state.activeMenuItem) {
         this.setState({ activeMenuItem });
@@ -70,20 +66,16 @@ class App extends Component {
   };
 
   componentWillMount() {
-    // this.props.history.push('/');
-  }
-
-  componentDidMount() {
-    // this.FetchGithubUsers();
+    this.props.requestAllUsers();
   }
 
   render() {
     const { activeMenuItem } = this.state;
     const { username, userId } = this.props.tokenContent;
-    // console.log(`App userId: ${userId}`);
 
-    const { users } = this.props.data;
+    console.log(this.props);
 
+    const { users } = this.props.data || [];
     let usersList;
     if (users) {
       usersList = users
@@ -136,4 +128,17 @@ class App extends Component {
   }
 }
 
-export default AuthWrapper(compose(graphql(fetchUsers))(App));
+// USING REACT-APOLLO PATTERN
+// const AppContainer = graphql(fetchUsers)(App);
+
+const mapStateToProps = state => ({ data: state.UsersReducer.users });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestAllUsers }, dispatch);
+
+const AppContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
+
+export default AuthWrapper(AppContainer);

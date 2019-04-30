@@ -37,7 +37,14 @@ const signupMutation = gql`
       }
     ) {
       ok
-      email
+      user {
+        _id
+        firstName
+        lastName
+        suffix
+        username
+        email
+      }
       errors {
         path
         message

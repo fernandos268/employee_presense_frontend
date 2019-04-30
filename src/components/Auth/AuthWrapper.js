@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { isLoggedIn, removeToken, decodeToken } from './Auth';
+
+import { withRouter } from 'react-router-dom';
 export default function WithAuth(AuthComponent) {
   return class AuthWrapped extends Component {
     constructor() {

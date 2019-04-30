@@ -76,7 +76,7 @@ class Signup extends Component {
         return this.props.history.replace('/signin');
       }
     } else {
-      this.next();
+      this.handleStepChange('next');
     }
   };
 
@@ -100,11 +100,7 @@ class Signup extends Component {
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
   };
 
-  redirectToSignin = () => {
-    return this.props.history.replace('/signin');
-  };
-
-  next = () => {
+  handleStepChange = buttonAction => {
     const {
       firstName,
       lastName,
@@ -116,29 +112,31 @@ class Signup extends Component {
     let newErrorFields = {
       ...errorFields,
     };
-
-    if (this.state.current === 0) {
-      if (firstName && lastName) {
-        current = current + 1;
+    if (buttonAction === 'cancel') {
+      return this.props.history.replace('/signin');
+    } else if (buttonAction === 'back') {
+      current = this.state.current - 1;
+      return this.setState({ current });
+    } else if (buttonAction === 'next') {
+      if (this.state.current === 0) {
+        if (firstName && lastName) {
+          current = current + 1;
+        }
+        newErrorFields.firstNameError = !firstName ? 'error' : '';
+        newErrorFields.lastNameError = !lastName ? 'error' : '';
+      } else if (this.state.current === 1) {
+        if (username && email && password) {
+          current = current + 1;
+        }
+        newErrorFields.usernameError = !username ? 'error' : '';
+        newErrorFields.emailError = !email ? 'error' : '';
+        newErrorFields.passwordError = !password ? 'error' : '';
       }
-      newErrorFields.firstNameError = !firstName ? 'error' : '';
-      newErrorFields.lastNameError = !lastName ? 'error' : '';
-    } else if (this.state.current === 1) {
-      if (username && email && password) {
-        current = current + 1;
-      }
-      newErrorFields.usernameError = !username ? 'error' : '';
-      newErrorFields.emailError = !email ? 'error' : '';
-      newErrorFields.passwordError = !password ? 'error' : '';
+      this.setState({
+        current: current,
+        errorFields: { ...newErrorFields },
+      });
     }
-    this.setState({
-      current: current,
-      errorFields: { ...newErrorFields },
-    });
-  };
-  prev = () => {
-    const current = this.state.current - 1;
-    this.setState({ current });
   };
 
   render() {
@@ -218,11 +216,9 @@ class Signup extends Component {
                 title={<SignupHeader />}
                 actions={[
                   <SignupActions
-                    redirectToSignin={this.redirectToSignin}
                     steps={steps}
                     current={current}
-                    next={this.next}
-                    prev={this.prev}
+                    handleStepChange={this.handleStepChange}
                   />,
                 ]}
               >

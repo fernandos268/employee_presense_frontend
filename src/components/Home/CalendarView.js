@@ -97,9 +97,7 @@ const CalendarVIew = props => {
   let calendarItems = [];
   if (dayOffItems) {
     calendarItems = Object.assign({}, ...dayOffItems);
-    console.log(dayOffItems);
     // const calenarItems = dayOffItems.map(inclusiveDate => [...inclusiveDate]);
-    console.log(calendarItems);
     // getListData(calendarItems);
   }
 

@@ -3,6 +3,7 @@ import {
   Card as Antd_Card,
   message as Antd_Message,
   Spin as Antd_Spin,
+  Row as Antd_Row,
 } from 'antd';
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
@@ -14,7 +15,6 @@ import { signinMutation } from '../Graphql/mutations';
 // Components
 import SigninForm from './SigninForm';
 import SigninHeader from './SigninHeader';
-import SignupButton from './SignupButton';
 
 class Signin extends Component {
   constructor(props) {
@@ -72,7 +72,17 @@ class Signin extends Component {
             <Antd_Card
               style={{ boxShadow: '0 8px 32px #aaa' }}
               title={<SigninHeader />}
-              actions={[<SignupButton handleRedirect={this.handleRedirect} />]}
+              actions={[
+                <Antd_Row type="flex" justify="center">
+                  <a
+                    style={{ size: '24' }}
+                    name="signin"
+                    onClick={this.handleRedirect}
+                  >
+                    Sign up here
+                  </a>
+                </Antd_Row>,
+              ]}
             >
               {errors !== null ? (
                 <Antd_Alert

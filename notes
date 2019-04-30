@@ -37,22 +37,32 @@ NOTE:
     --> allowing us to write completely synchronous-looking code while performing asynchronous tasks behind     the scenes.
     --> async: an async function returns a promise, to perform a non-blocking process.
     --> await: only works inside the async function, to wait for a promise to be settled and returns its result.
-    
+
 
 5. Shallow vs Deep Object Copy
     --> Shallow: Copies the memory allocation of the copied object,
     --> Deep: Copies all the values of a object and gets it's own memory allocation.
 
-6. redux
-    -->
-
-7. react lifecycle
-    -->
-
-8. Key prop in mapped list:
+6. Key prop in mapped list:
     --> Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements inside the array to give the elements a stable identity:
 
-9. create a module with the following requirements:
+
+7. react lifecycle methids
+    --> 1. GetdDefaultProps & GetInitialState - called in the pre-rendering phase.
+        2. ComponentWillMount - Called before render() method is executed.
+        3. ComponentDidMount - as soon as the render() method has been executed.
+        4. render - mandatory method, required to return something.
+        5. shouldComponentUpdate - will not get called on initial rendering, but will be        called on re-render. retunrs a boolean that determines if a re-rendering should      be done.
+        6. componentWillUpdate - gets called as soon as shouldComponentUpdate() returns true.
+        7. ComponentWillReceiveProps - only gets called when the props have changed and when    this is not an initial rendering.
+        8. componentWillUnmount - gets called when the component is removed from the DOM.
+
+
+8. redux
+    --> 
+
+
+*** create a module with the following requirements: ***
     ⭕ CRUD for Data
     ⭕ Sort data
     ⭕ Arrow Functions (if applicable)
