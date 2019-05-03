@@ -135,3 +135,117 @@ export const signinMutation = async user => {
 };
 
 //  --------------------------------------------
+export const fetchCurrentUserOvertimes = async userId => {
+  console.log({ fetchCurrentUserOvertimes: userId });
+  try {
+    const response = await axios({
+      method: 'post',
+      url: apiUrl,
+      headers: { authorization: getToken() },
+      data: {
+        query: `
+        query fetchUser($id: ID!) {
+          fetchUser(userId: $id) {
+            ok
+            errors {
+              path
+              message
+            }
+            user {
+              createdOvertimes {
+                _id
+                date
+                startTime
+                endTime
+                duration
+                description
+                status
+                approver {
+                  firstName
+                  lastName
+                  suffix
+                }
+              }
+              assignedOvertimes {
+                _id
+                date
+                startTime
+                endTime
+                duration
+                description
+                status
+                creator {
+                  firstName
+                  lastName
+                  suffix
+                }
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: userId,
+        },
+      },
+    });
+    return response.data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const fetchCurrentUserDayoffs = async user => {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: apiUrl,
+      headers: { authorization: getToken() },
+      data: {
+        query: `
+        query fetchUser($id: ID!) {
+          fetchUser(userId: $id) {
+            ok
+            errors {
+              path
+              message
+            }
+            user {
+              createdDayOffs {
+                _id
+                startDate
+                endDate
+                description
+                duration
+                approver {
+                  firstName
+                  lastName
+                  suffix
+                }
+                status
+              }
+              assignedDayOffs {
+                _id
+                startDate
+                endDate
+                description
+                duration
+                creator {
+                  firstName
+                  lastName
+                  suffix
+                }
+                status
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: user.id,
+        },
+      },
+    });
+    return response.data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};

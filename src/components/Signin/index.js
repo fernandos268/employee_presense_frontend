@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import {
   requestSignin,
   receiveSigninResponse,
-  receiveSigninSuccess,
+  resetSigninErrors,
 } from '../../redux/actions';
 
 class Signin extends Component {
@@ -49,6 +49,7 @@ class Signin extends Component {
   };
 
   handleRedirect = () => {
+    this.props.resetSigninErrors();
     return this.props.history.push('/signup');
   };
 
@@ -62,12 +63,13 @@ class Signin extends Component {
       setToken(token);
       Antd_Message.success(`Successfully logged in`);
       this.props.history.replace('/');
-      this.props.receiveSigninSuccess();
+      this.props.resetSigninErrors();
     }
   }
 
+  componentWillUnmount() {}
+
   render() {
-    console.log(this.props);
     const { isLoading, errors } = this.props.data;
 
     return (
@@ -126,7 +128,7 @@ const mapDispatchToProps = dispatch =>
     {
       requestSignin,
       receiveSigninResponse,
-      receiveSigninSuccess,
+      resetSigninErrors,
     },
     dispatch
   );

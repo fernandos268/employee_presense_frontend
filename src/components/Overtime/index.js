@@ -27,6 +27,11 @@ import {
 } from '../Graphql/mutations';
 import { fetchUserData } from '../Graphql/queries';
 
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestCurrentUserOvertimes } from '../../redux/actions';
+
 // Component Imports -------------------------------------
 import OvertimeForm from './OvertimeForm';
 import { MyApprovalColumns, MyTableColumns } from './OvertimeTableColumns';
@@ -42,6 +47,10 @@ class Overtime extends Component {
       containerWidth: 0,
       isLoading: false,
     };
+  }
+
+  componentDidMount() {
+    this.props.requestCurrentUserOvertimes(this.props.userId);
   }
 
   showForm = () => {
@@ -194,6 +203,7 @@ class Overtime extends Component {
   };
 
   render() {
+    console.log(this.props);
     const { formVisible } = this.state;
     const { loading } = this.props.data;
     const { users } = this.props;
@@ -202,28 +212,28 @@ class Overtime extends Component {
       MyAssignedOvertimes = [];
 
     // TRANSFORM USERS TO BE POPULATED IN APPROVERS DROPDOWN
-    let ApproverOptions;
-    if (users) {
-      ApproverOptions = users.map(user => {
-        const suffix = user.suffix || '';
-        return (
-          <Antd_Select.Option key={user._id}>{`${user.firstName} ${
-            user.lastName
-          } ${suffix}`}</Antd_Select.Option>
-        );
-      });
-    }
+    let ApproverOptions = [];
+    // if (users) {
+    //   ApproverOptions = users.map(user => {
+    //     const suffix = user.suffix || '';
+    //     return (
+    //       <Antd_Select.Option key={user._id}>{`${user.firstName} ${
+    //         user.lastName
+    //       } ${suffix}`}</Antd_Select.Option>
+    //     );
+    //   });
+    // }
 
-    if (!loading) {
-      MyOvertimes = TransformTableData(
-        this.props.data.fetchUser.user.createdOvertimes,
-        'MyTableData'
-      );
-      MyAssignedOvertimes = TransformTableData(
-        this.props.data.fetchUser.user.assignedOvertimes,
-        'AssignedTableData'
-      );
-    }
+    // if (!loading) {
+    //   MyOvertimes = TransformTableData(
+    //     this.props.data.fetchUser.user.createdOvertimes,
+    //     'MyTableData'
+    //   );
+    //   MyAssignedOvertimes = TransformTableData(
+    //     this.props.data.fetchUser.user.assignedOvertimes,
+    //     'AssignedTableData'
+    //   );
+    // }
 
     return (
       <div
@@ -304,11 +314,26 @@ class Overtime extends Component {
 
 // export default graphql(createOvertimeMutation, { name: 'createOvertimeMutation' })(Overtime);
 
-export default compose(
-  graphql(createOvertimeMutation, { name: 'createOvertimeMutation' }),
-  graphql(deleteOvertimeMutation, { name: 'deleteOvertimeMutation' }),
-  graphql(updateOvertimeMutation, { name: 'updateOvertimeMutation' }),
-  graphql(fetchUserData, {
-    options: props => ({ variables: { id: props.userId } }),
-  })
+// export default compose(
+//   graphql(createOvertimeMutation, { name: 'createOvertimeMutation' }),
+//   graphql(deleteOvertimeMutation, { name: 'deleteOvertimeMutation' }),
+//   graphql(updateOvertimeMutation, { name: 'updateOvertimeMutation' }),
+//   graphql(fetchUserData, {
+//     options: props => ({ variables: { id: props.userId } }),
+//   })
+// )(Overtime);
+
+const mapStateToProps = state => ({ data: state });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestCurrentUserOvertimes,
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(Overtime);

@@ -73,9 +73,7 @@ class App extends Component {
     const { activeMenuItem } = this.state;
     const { username, userId } = this.props.tokenContent;
 
-    console.log(this.props);
-
-    const { users } = this.props.data || [];
+    const { users } = this.props.UsersReducer.users || [];
     let usersList;
     if (users) {
       usersList = users
@@ -131,7 +129,7 @@ class App extends Component {
 // USING REACT-APOLLO PATTERN
 // const AppContainer = graphql(fetchUsers)(App);
 
-const mapStateToProps = state => ({ data: state.UsersReducer.users });
+const mapStateToProps = state => ({ ...state });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestAllUsers }, dispatch);

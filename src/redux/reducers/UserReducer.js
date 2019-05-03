@@ -11,7 +11,7 @@ const initialState = {
 
 export default (state = initialState, { type, data }) => {
   switch (type) {
-    // FETCH ALL USERS-----------------------------------
+    // FETCH ALL USERS------------------------------------
     case ActionTypes.RECEIVE_ALL_USERS:
       return { ...state, users: data };
     // CREATE USER ---------------------------------------
@@ -26,7 +26,7 @@ export default (state = initialState, { type, data }) => {
       return { ...state, isLoading: true };
     case ActionTypes.RECEIVE_SIGNIN_RESPONSE:
       return { ...state, ...data, isLoading: false };
-    case ActionTypes.RECEIVE_SIGNIN_SUCCESS:
+    case ActionTypes.RESET_SIGNIN_ERRORS:
       return { ...state, errors: [] };
     // REQUEST ERROR--------------------------------------
     case ActionTypes.RECEIVE_API_REQUEST_FAILURE:

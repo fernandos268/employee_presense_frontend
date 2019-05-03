@@ -42,8 +42,6 @@ class Signup extends Component {
       redirectToReferrer: false,
       current: 0,
       confirmDirty: false,
-      isLoading: false,
-      errors: [],
 
       fieldValues: {
         firstName: '',
@@ -71,8 +69,8 @@ class Signup extends Component {
   componentDidUpdate() {
     if (this.props.data.ok) {
       AntdMessage.success('Account has been suceessfully created');
-      this.props.history.replace('/signin');
       this.props.receiveCreatedUserSuccess();
+      this.props.history.replace('/signin');
     }
   }
 

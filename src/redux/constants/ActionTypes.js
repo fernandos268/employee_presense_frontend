@@ -1,4 +1,5 @@
 // USER
+
 // Fetch All Users
 export const REQUEST_ALL_USERS = 'REQUEST_ALL_USERS';
 export const RECEIVE_ALL_USERS = 'RECEIVE_ALL_USERS';
@@ -15,7 +16,14 @@ export const RECEIVE_CREATED_USER_SUCCESS = 'RECEIVE_CREATED_USER_SUCCESS';
 // Signin Actions
 export const REQUEST_SIGNIN = 'REQUEST_SIGNIN';
 export const RECEIVE_SIGNIN_RESPONSE = 'RECEIVE_SIGNIN_RESPONSE';
-export const RECEIVE_SIGNIN_SUCCESS = 'RECEIVE_SIGNIN_SUCCESS';
+export const RESET_SIGNIN_ERRORS = 'RESET_SIGNIN_ERRORS';
+
+//------------------------------------------------------------------------
+// OVERTIME
+
+// Fetch All Overtimes
+export const REQUEST_CURRENT_USER_OVERTIMES = 'REQUEST_CURRENT_USER_OVERTIMES';
+export const RECEIVE_CURRENT_USER_OVERTIMES = 'RECEIVE_CURRENT_USER_OVERTIMES';
 
 //------------------------------------------------------------------------
 // DAYOFF
@@ -24,11 +32,6 @@ export const DELETE_DAYOFF = 'DELETE_DAYOFF';
 export const UPDATE_DAYOFF = 'UPDATE_DAYOFF';
 export const GET_DAYOFFS = 'GET_DAYOFFS';
 
-// OVERTIME
-export const ADD_OVERTIME = 'ADD_OVERTIME';
-export const DELETE_OVERTIME = 'DELETE_OVERTIME';
-export const UPDATE_OVERTIME = 'UPDATE_OVERTIME';
-export const GET_OVERTIMES = 'GET_OVERTIMES';
-
+//------------------------------------------------------------------------
 // GENERAL
 export const RECEIVE_API_REQUEST_FAILURE = 'RECEIVE_API_REQUEST_FAILURE';

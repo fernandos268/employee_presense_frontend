@@ -7,36 +7,31 @@ export const receiveApiRequestFailure = () => ({
 
 // USERS --------------------------------------
 
-// FETCH ALL USERS
-
+// -----------FETCH ALL USERS
 export const requestAllUsers = () => ({ type: ActionTypes.REQUEST_ALL_USERS });
-
 export const receiveAllUsers = data => ({
   type: ActionTypes.RECEIVE_ALL_USERS,
   data,
 });
 
-// FETCH A SINGLE USER
+// ------------FETCH A SINGLE USER
 export const requestUser = () => ({ type: ActionTypes.REQUEST_USER });
-
 export const receiveUser = data => ({ type: ActionTypes.RECEIVE_USER, data });
 
-// CREATE USER
+// ------------CREATE USER
 export const requestCreateUser = data => ({
   type: ActionTypes.REQUEST_CREATE_USER,
   data,
 });
-
 export const receiveCreateUserResponse = data => ({
   type: ActionTypes.RECEIVE_CREATED_USER_RESPONSE,
   data,
 });
-
 export const receiveCreatedUserSuccess = () => ({
   type: ActionTypes.RECEIVE_CREATED_USER_SUCCESS,
 });
 
-// SIGNIN
+// ------------- SIGNIN
 export const requestSignin = data => ({
   type: ActionTypes.REQUEST_SIGNIN,
   data,
@@ -45,11 +40,19 @@ export const receiveSigninResponse = data => ({
   type: ActionTypes.RECEIVE_SIGNIN_RESPONSE,
   data,
 });
-
-export const receiveSigninSuccess = () => ({
-  type: ActionTypes.RECEIVE_SIGNIN_SUCCESS,
+export const resetSigninErrors = () => ({
+  type: ActionTypes.RESET_SIGNIN_ERRORS,
 });
 
 // OVERTIME -------------------------------------
+export const requestCurrentUserOvertimes = data => ({
+  type: ActionTypes.REQUEST_CURRENT_USER_OVERTIMES,
+  data,
+});
+
+export const receiveCurrentUserOvertimes = data => ({
+  type: ActionTypes.RECEIVE_CURRENT_USER_OVERTIMES,
+  data,
+});
 
 // DAYOFF ---------------------------------------
