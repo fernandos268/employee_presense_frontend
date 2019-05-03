@@ -1,13 +1,15 @@
 import axios from 'axios';
 import { getToken } from '../components/Auth/Auth';
 
-const URL = 'http://localhost:4040/graphql';
+const apiUrl = 'http://localhost:4040/graphql';
+
+// USERS --------------------------------------------
 
 export const fetchUsers = async () => {
   try {
     const response = await axios({
       method: 'post',
-      url: URL,
+      url: apiUrl,
       headers: { authorization: getToken() },
       data: {
         query: `
@@ -41,8 +43,8 @@ export const signupMutation = async user => {
       isAdmin,
     } = user;
 
-    const response = axios({
-      url: url,
+    const response = await axios({
+      url: apiUrl,
       method: 'post',
       data: {
         query: `
@@ -82,19 +84,54 @@ export const signupMutation = async user => {
             }
           }`,
         variables: {
-          $firstName: firstName,
-          $lastName: lastName,
-          $suffix: suffix,
-          $username: username,
-          $email: email,
-          $password: password,
-          $isAdmin: isAdmin,
+          firstName: firstName,
+          lastName: lastName,
+          suffix: suffix,
+          username: username,
+          email: email,
+          password: password,
+          isAdmin: isAdmin,
         },
       },
     });
 
-    return response.data.data;
+    const responseData = response.data.data.createUser;
+    return { ...responseData, isLoading: false };
   } catch (e) {
     console.log(e);
   }
 };
+
+export const signinMutation = async user => {
+  const { email, password } = user;
+  try {
+    const response = await axios({
+      url: apiUrl,
+      method: 'post',
+      data: {
+        query: `
+          mutation($email: String!, $password: String!) {
+            signin(email: $email, password: $password) {
+              token
+              ok
+              errors {
+                path
+                message
+              }
+            }
+          }
+        `,
+        variables: {
+          email: email,
+          password: password,
+        },
+      },
+    });
+    const responseData = response.data.data.signin;
+    return { ...responseData, isLoading: false };
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//  --------------------------------------------

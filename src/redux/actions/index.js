@@ -1,11 +1,55 @@
-// import { REQUEST_ALL_USERS, RECEIVE_ALL_USERS } from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 
-export const REQUEST_ALL_USERS = 'REQUEST_ALL_USERS';
-export const RECEIVE_ALL_USERS = 'RECEIVE_ALL_USERS';
+// GENERAL
+export const receiveApiRequestFailure = () => ({
+  type: ActionTypes.RECEIVE_API_REQUEST_FAILURE,
+});
 
-export const REQUEST_CREATE_USER = 'REQUEST_CREATE_USER';
-export const CREATE_USER_SUCCEED = 'CREATE_USER_SUCCEED';
-export const CREATE_USER_FAILED = 'CREATE_USER_FAILED';
+// USERS --------------------------------------
 
-export const requestAllUsers = () => ({ type: REQUEST_ALL_USERS });
-export const receiveAllUsers = data => ({ type: RECEIVE_ALL_USERS, data });
+// FETCH ALL USERS
+
+export const requestAllUsers = () => ({ type: ActionTypes.REQUEST_ALL_USERS });
+
+export const receiveAllUsers = data => ({
+  type: ActionTypes.RECEIVE_ALL_USERS,
+  data,
+});
+
+// FETCH A SINGLE USER
+export const requestUser = () => ({ type: ActionTypes.REQUEST_USER });
+
+export const receiveUser = data => ({ type: ActionTypes.RECEIVE_USER, data });
+
+// CREATE USER
+export const requestCreateUser = data => ({
+  type: ActionTypes.REQUEST_CREATE_USER,
+  data,
+});
+
+export const receiveCreateUserResponse = data => ({
+  type: ActionTypes.RECEIVE_CREATED_USER_RESPONSE,
+  data,
+});
+
+export const receiveCreatedUserSuccess = () => ({
+  type: ActionTypes.RECEIVE_CREATED_USER_SUCCESS,
+});
+
+// SIGNIN
+export const requestSignin = data => ({
+  type: ActionTypes.REQUEST_SIGNIN,
+  data,
+});
+export const receiveSigninResponse = data => ({
+  type: ActionTypes.RECEIVE_SIGNIN_RESPONSE,
+  data,
+});
+
+export const receiveSigninSuccess = () => ({
+  type: ActionTypes.RECEIVE_SIGNIN_SUCCESS,
+});
+
+// OVERTIME -------------------------------------
+
+// DAYOFF ---------------------------------------

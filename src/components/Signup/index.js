@@ -23,6 +23,15 @@ import Step1 from './SignupStep1';
 import Step2 from './SignupStep2';
 import Step3 from './SignupStep3';
 
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  requestCreateUser,
+  receiveCreateUserResponse,
+  receiveCreatedUserSuccess,
+} from '../../redux/actions';
+
 const Step = AntdSteps.Step;
 
 class Signup extends Component {
@@ -31,10 +40,10 @@ class Signup extends Component {
 
     this.state = {
       redirectToReferrer: false,
-      errors: null,
       current: 0,
       confirmDirty: false,
       isLoading: false,
+      errors: [],
 
       fieldValues: {
         firstName: '',
@@ -59,22 +68,19 @@ class Signup extends Component {
     if (isLoggedIn()) this.props.history.replace('/');
   }
 
-  handleSubmit = async e => {
+  componentDidUpdate() {
+    if (this.props.data.ok) {
+      AntdMessage.success('Account has been suceessfully created');
+      this.props.history.replace('/signin');
+      this.props.receiveCreatedUserSuccess();
+    }
+  }
+
+  handleSubmit = e => {
     e.preventDefault();
-    const { fieldValues } = this.state;
+    const user = this.state.fieldValues;
     if (this.state.current === 2) {
-      console.log(this.state.fieldValues);
-      this.setState({ isLoading: true });
-      const response = await this.props.signupMutation({
-        variables: fieldValues,
-        refetchQueries: [{ query: fetchUsers }],
-      });
-      const { ok, errors } = response.data.createUser;
-      this.setState({ isLoading: false, errors: errors });
-      if (ok) {
-        AntdMessage.success('Account has been suceessfully created');
-        return this.props.history.replace('/signin');
-      }
+      this.props.requestCreateUser(user); // DISPATCH THE CREATE USER ACTION
     } else {
       this.handleStepChange('next');
     }
@@ -140,7 +146,10 @@ class Signup extends Component {
   };
 
   render() {
-    const { current, isLoading, errors, fieldValues, errorFields } = this.state;
+    const { current, fieldValues, errorFields } = this.state;
+
+    const { isLoading, errors } = this.props.data;
+
     const steps = [
       {
         title: 'Personal',
@@ -222,7 +231,7 @@ class Signup extends Component {
                   />,
                 ]}
               >
-                {errors !== null ? (
+                {errors.length !== 0 ? (
                   <AntdAlert
                     message="Error"
                     description={errors.map(error => {
@@ -258,7 +267,19 @@ class Signup extends Component {
   }
 }
 
-export default compose(
-  graphql(signupMutation, { name: 'signupMutation' }),
-  graphql(fetchUsers)
+const mapStateToProps = state => ({ data: state.UsersReducer });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestCreateUser,
+      receiveCreateUserResponse,
+      receiveCreatedUserSuccess,
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(withRouter(Signup));

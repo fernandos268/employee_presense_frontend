@@ -1,20 +1,59 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
-import { receiveAllUsers } from '../actions';
+// ACTION TYPES
+import * as ActionTypes from '../constants/ActionTypes';
 
-import { REQUEST_ALL_USERS } from '../constants/ActionTypes';
+// ACTIONS
+import {
+  receiveAllUsers,
+  receiveCreateUserResponse,
+  receiveApiRequestFailure,
+  receiveSigninResponse,
+} from '../actions';
 
-import { fetchUsers } from '../../apiRequests';
+// API REQUESTS
+import { fetchUsers, signupMutation, signinMutation } from '../../apiRequests';
 
-function* getUsersFromAPI() {
+// GET ALL USERS
+function* GetUsers() {
   try {
     const data = yield call(fetchUsers);
     yield put(receiveAllUsers(data));
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 }
 
-export function* UsersSaga() {
-  yield takeLatest(REQUEST_ALL_USERS, getUsersFromAPI);
+// CREATE USER
+function* CreateUser(user) {
+  try {
+    const response = yield call(signupMutation, user.data);
+    if (!response) {
+      return yield put(receiveApiRequestFailure());
+    }
+    yield put(receiveCreateUserResponse(response));
+  } catch (e) {
+    yield put(receiveApiRequestFailure());
+    throw e;
+  }
+}
+
+// SIGNIN
+function* Signin(user) {
+  try {
+    const response = yield call(signinMutation, user.data);
+    if (!response) {
+      return yield put(receiveApiRequestFailure());
+    }
+    yield put(receiveSigninResponse(response));
+  } catch (e) {
+    yield put(receiveApiRequestFailure());
+    throw e;
+  }
+}
+
+export function* rootUsersSaga() {
+  yield takeLatest(ActionTypes.REQUEST_ALL_USERS, GetUsers);
+  yield takeLatest(ActionTypes.REQUEST_CREATE_USER, CreateUser);
+  yield takeLatest(ActionTypes.REQUEST_SIGNIN, Signin);
 }
