@@ -1,6 +1,13 @@
 import { all, fork } from 'redux-saga/effects';
 
-import { rootUsersSaga } from './UserSaga';
+import { UsersSagaWatcher } from './UserSaga';
+import {OvertimeSagaWatcher} from './OvertimeSaga'
+
+
 export default function* rootSaga() {
-  yield all([fork(rootUsersSaga)]);
+  yield all([
+    fork(UsersSagaWatcher),
+    fork(OvertimeSagaWatcher)
+    ]);
 }
+

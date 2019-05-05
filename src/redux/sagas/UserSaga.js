@@ -52,7 +52,7 @@ function* Signin(user) {
   }
 }
 
-export function* rootUsersSaga() {
+export function* UsersSagaWatcher() {
   yield takeLatest(ActionTypes.REQUEST_ALL_USERS, GetUsers);
   yield takeLatest(ActionTypes.REQUEST_CREATE_USER, CreateUser);
   yield takeLatest(ActionTypes.REQUEST_SIGNIN, Signin);

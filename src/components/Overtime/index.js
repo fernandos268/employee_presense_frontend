@@ -30,7 +30,13 @@ import { fetchUserData } from '../Graphql/queries';
 // redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestCurrentUserOvertimes } from '../../redux/actions';
+import {
+  requestCurrentUserOvertimes,
+  requestCreateOvertime,
+  receiveCreatedOvertimeSuccess,
+  requestDeleteOvertime,
+  requestUpdateOvertime
+} from '../../redux/actions';
 
 // Component Imports -------------------------------------
 import OvertimeForm from './OvertimeForm';
@@ -53,13 +59,28 @@ class Overtime extends Component {
     this.props.requestCurrentUserOvertimes(this.props.userId);
   }
 
+  componentDidUpdate() {
+    console.log({ "this.props": this.props });
+    if (this.props.data.ok) {
+      Antd_Message.success(`Entry has been successfully ${this.props.data.operation}`);
+      this.props.receiveCreatedOvertimeSuccess();
+      this.closeForm();
+      Antd_Modal.destroyAll()
+    }
+    if (this.props.data.errors.length !== 0) {
+      Antd_Message.error(errors.message);
+    }
+
+
+  }
+
   showForm = () => {
     this.setState({
       formVisible: true,
     });
   };
 
-  onFormClose = () => {
+  closeForm = () => {
     const form = this.formRef;
     form.resetFields();
     this.setState({
@@ -77,7 +98,7 @@ class Overtime extends Component {
       const calcDuration = moment.duration(end.diff(start));
       const duration = `${calcDuration._data.hours} Hr & ${
         calcDuration._data.minutes
-      } Min`;
+        } Min`;
 
       if (calcDuration._milliseconds > 0) {
         // return this.setState({ duration })
@@ -103,37 +124,21 @@ class Overtime extends Component {
     const form = this.formRef;
     form.validateFields(async (err, fieldsValue) => {
       if (!err) {
-        // Should format date value before submit.
-        this.setState({ isLoading: true });
         const values = {
           ...fieldsValue,
           timeStarted: fieldsValue['timeStarted'].format('HH:mm'),
           timeEnded: fieldsValue['timeEnded'].format('HH:mm'),
         };
-        const response = await this.props.createOvertimeMutation({
-          variables: {
-            date: values.date.toISOString(),
-            startTime: values.timeStarted,
-            endTime: values.timeEnded,
-            duration: values.duration,
-            description: values.description,
-            status: 'Pending',
-            approverId: values.approver,
-          },
-          refetchQueries: [
-            { query: fetchUserData, variables: { id: this.props.userId } },
-          ],
-        });
-        const { ok, errors } = response.data.createOvertime;
-        this.setState({ isLoading: false, errors: errors });
-        if (errors) {
-          return Antd_Message.error(errors.message);
+        const variables = {
+          date: values.date.toISOString(),
+          startTime: values.timeStarted,
+          endTime: values.timeEnded,
+          duration: values.duration,
+          description: values.description,
+          status: 'Pending',
+          approverId: values.approver,
         }
-
-        if (ok) {
-          Antd_Message.success('New entry has been added');
-          return this.onFormClose();
-        }
+        this.props.requestCreateOvertime(variables)
       }
     });
   };
@@ -142,27 +147,11 @@ class Overtime extends Component {
     Antd_Modal.confirm({
       title: 'Are you sure you want to delete this entry?',
       okText: 'Yes',
+      confirmLoading: true,
       okType: 'danger',
       centered: true,
       onOk: () => {
-        return this.props
-          .deleteOvertimeMutation({
-            variables: {
-              id: record._id,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.deleteOvertime;
-            if (errors) {
-              return Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              return Antd_Message.success('Entry has been deleted');
-            }
-          });
+        this.props.requestDeleteOvertime(record._id)
       },
     });
   };
@@ -175,25 +164,10 @@ class Overtime extends Component {
       okType: 'primary',
       centered: true,
       onOk: () => {
-        return this.props
-          .updateOvertimeMutation({
-            variables: {
-              id: record._id,
-              status: status,
-            },
-            refetchQueries: [
-              { query: fetchUserData, variables: { id: this.props.userId } },
-            ],
-          })
-          .then(response => {
-            const { ok, errors } = response.data.updateOvertime;
-            if (errors) {
-              return Antd_Message.error(errors.message);
-            }
-            if (ok) {
-              return Antd_Message.success(`Entry has been ${status}`);
-            }
-          });
+        return this.props.requestUpdateOvertime({
+          id: record._id,
+          status: status,
+        })
       },
     });
   };
@@ -203,9 +177,9 @@ class Overtime extends Component {
   };
 
   render() {
-    console.log(this.props);
+
     const { formVisible } = this.state;
-    const { loading } = this.props.data;
+    const { isLoading, operationLoading } = this.props.data;
     const { users } = this.props;
 
     let MyOvertimes,
@@ -213,27 +187,28 @@ class Overtime extends Component {
 
     // TRANSFORM USERS TO BE POPULATED IN APPROVERS DROPDOWN
     let ApproverOptions = [];
-    // if (users) {
-    //   ApproverOptions = users.map(user => {
-    //     const suffix = user.suffix || '';
-    //     return (
-    //       <Antd_Select.Option key={user._id}>{`${user.firstName} ${
-    //         user.lastName
-    //       } ${suffix}`}</Antd_Select.Option>
-    //     );
-    //   });
-    // }
+    if (users) {
+      ApproverOptions = users.map(user => {
+        const suffix = user.suffix || '';
+        return (
+          <Antd_Select.Option key={user._id}>{`${user.firstName} ${
+            user.lastName
+            } ${suffix}`}
+          </Antd_Select.Option>
+        );
+      });
+    }
 
-    // if (!loading) {
-    //   MyOvertimes = TransformTableData(
-    //     this.props.data.fetchUser.user.createdOvertimes,
-    //     'MyTableData'
-    //   );
-    //   MyAssignedOvertimes = TransformTableData(
-    //     this.props.data.fetchUser.user.assignedOvertimes,
-    //     'AssignedTableData'
-    //   );
-    // }
+    if (!isLoading) {
+      MyOvertimes = TransformTableData(
+        this.props.data.createdOvertimes || [],
+        'MyTableData'
+      );
+      MyAssignedOvertimes = TransformTableData(
+        this.props.data.assignedOvertimes || [],
+        'AssignedTableData'
+      );
+    }
 
     return (
       <div
@@ -242,7 +217,7 @@ class Overtime extends Component {
       >
         <Antd_Spin
           tip="Fetching data..."
-          spinning={loading}
+          spinning={isLoading}
           style={{ height: '100%' }}
         >
           <SUI_Segment raised>
@@ -299,12 +274,12 @@ class Overtime extends Component {
           </SUI_Segment>
           <OvertimeForm
             formVisible={formVisible}
-            onFormClose={this.onFormClose}
+            closeForm={this.closeForm}
             handleSubmit={this.handleSubmit}
             ref={this.saveFormRef}
             handleOnValueChange={this.handleOnValueChange}
             ApproverOptions={ApproverOptions}
-            isLoading={this.state.isLoading}
+            isLoading={operationLoading}
           />
         </Antd_Spin>
       </div>
@@ -323,12 +298,16 @@ class Overtime extends Component {
 //   })
 // )(Overtime);
 
-const mapStateToProps = state => ({ data: state });
+const mapStateToProps = state => ({ data: state.OvertimeReducer });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       requestCurrentUserOvertimes,
+      requestCreateOvertime,
+      receiveCreatedOvertimeSuccess,
+      requestDeleteOvertime,
+      requestUpdateOvertime
     },
     dispatch
   );

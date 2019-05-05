@@ -20,14 +20,14 @@ export default (state = initialState, { type, data }) => {
     case ActionTypes.RECEIVE_CREATED_USER_RESPONSE:
       return { ...state, ...data, isLoading: false };
     case ActionTypes.RECEIVE_CREATED_USER_SUCCESS:
-      return state;
+      return {...state,ok: false };
     //  SIGNIN--------------------------------------------
     case ActionTypes.REQUEST_SIGNIN:
       return { ...state, isLoading: true };
     case ActionTypes.RECEIVE_SIGNIN_RESPONSE:
       return { ...state, ...data, isLoading: false };
     case ActionTypes.RESET_SIGNIN_ERRORS:
-      return { ...state, errors: [] };
+      return { ...state, errors: [],ok: false };
     // REQUEST ERROR--------------------------------------
     case ActionTypes.RECEIVE_API_REQUEST_FAILURE:
       return {

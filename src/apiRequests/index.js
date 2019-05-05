@@ -5,12 +5,13 @@ const apiUrl = 'http://localhost:4040/graphql';
 
 // USERS --------------------------------------------
 
+// GET ALL USERS
 export const fetchUsers = async () => {
   try {
     const response = await axios({
       method: 'post',
       url: apiUrl,
-      headers: { authorization: getToken() },
+      headers: { authorization: `Bearer ${getToken()}` },
       data: {
         query: `
             query  {
@@ -30,7 +31,7 @@ export const fetchUsers = async () => {
     console.log(e);
   }
 };
-
+// SIGN UP
 export const signupMutation = async user => {
   try {
     const {
@@ -83,15 +84,7 @@ export const signupMutation = async user => {
               }
             }
           }`,
-        variables: {
-          firstName: firstName,
-          lastName: lastName,
-          suffix: suffix,
-          username: username,
-          email: email,
-          password: password,
-          isAdmin: isAdmin,
-        },
+        variables: user,
       },
     });
 
@@ -101,7 +94,7 @@ export const signupMutation = async user => {
     console.log(e);
   }
 };
-
+// SIGN IN
 export const signinMutation = async user => {
   const { email, password } = user;
   try {
@@ -134,14 +127,15 @@ export const signinMutation = async user => {
   }
 };
 
-//  --------------------------------------------
+//  OVERTIME --------------------------------------------
+
+// GET ALL OVERTIMES
 export const fetchCurrentUserOvertimes = async userId => {
-  console.log({ fetchCurrentUserOvertimes: userId });
   try {
     const response = await axios({
       method: 'post',
       url: apiUrl,
-      headers: { authorization: getToken() },
+      headers: { authorization: `Bearer ${getToken()}` },
       data: {
         query: `
         query fetchUser($id: ID!) {
@@ -188,18 +182,173 @@ export const fetchCurrentUserOvertimes = async userId => {
         },
       },
     });
-    return response.data.data;
+    return response.data.data.fetchUser;
   } catch (e) {
     console.log(e);
   }
 };
+//CREATE OVERTIME
+export const createOvertimeMutation = async overtime => {
+  try {
+    const response = await axios({
+      url: apiUrl,
+      headers: { authorization: `Bearer ${getToken()}` },
+      method: 'post',
+      data: {
+        query: `
+            mutation(
+              $date: String!
+              $startTime: String!
+              $endTime: String!
+              $duration: String!
+              $description: String!
+              $status: String!
+              $approverId: ID!
+            ) {
+              createOvertime(
+                overtimeInput: {
+                  date: $date
+                  startTime: $startTime
+                  endTime: $endTime
+                  duration: $duration
+                  description: $description
+                  status: $status
+                  approverId: $approverId
+                }
+              ) {
+                ok
+                errors {
+                  path
+                  message
+                }
+                overtime {
+                  _id
+                  date
+                  startTime
+                  endTime
+                  duration
+                  description
+                  status
+                  approver {
+                    firstName
+                    lastName
+                    suffix
+                  }
+                }
+              }
+            }
+          `,
+        variables: overtime,
+      },
+    });
+    const responseData = response.data.data.createOvertime;
+    return responseData
+  } catch (e) {
+    console.log(e);
+  }
+}
 
+// DELETE OVERTIME
+export const deleteOvertimeMutation = async overtimeId => {
+  try {
+    const response = await axios({
+      url: apiUrl,
+      headers: { authorization: `Bearer ${getToken()}` },
+      method: 'post',
+      data: {
+        query: `
+            mutation($id: ID!) {
+              deleteOvertime(overtimeId: $id) {
+                ok
+                errors {
+                  path
+                  message
+                }
+                overtime {
+                  _id
+                  date
+                  startTime
+                  endTime
+                  duration
+                  description
+                  status
+                  approver {
+                    firstName
+                    lastName
+                    suffix
+                  }
+                }
+              }
+            }
+          `,
+        variables: { id: overtimeId },
+      },
+    });
+    console.log({ deleteMutation: response })
+    const responseData = response.data.data.deleteOvertime.overtime;
+    return responseData
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+
+// UPDATE OVERTIME
+export const updateOvertimeMutation = async overtime => {
+  try {
+    const response = await axios({
+      url: apiUrl,
+      headers: { authorization: `Bearer ${getToken()}` },
+      method: 'post',
+      data: {
+        query: `
+            mutation($id: ID!, $status: String!) {
+              updateOvertime(overtimeId: $id, status: $status) {
+                ok
+                errors {
+                  path
+                  message
+                }
+                overtime {
+                  _id
+                  date
+                  startTime
+                  endTime
+                  duration
+                  description
+                  status
+                  creator {
+                    firstName
+                    lastName
+                    suffix
+                  }
+                  approver {
+                    firstName
+                    lastName
+                    suffix
+                  }
+                }
+              }
+            }
+          `,
+        variables: overtime,
+      },
+    });
+    const responseData = response.data.data.updateOvertime;
+    return responseData
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+//---------------------------------------------------------------------------------------------
 export const fetchCurrentUserDayoffs = async user => {
   try {
     const response = await axios({
       method: 'post',
       url: apiUrl,
-      headers: { authorization: getToken() },
+      headers: { authorization: `Bearer ${getToken()}` },
       data: {
         query: `
         query fetchUser($id: ID!) {

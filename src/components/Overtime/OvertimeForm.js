@@ -17,21 +17,22 @@ import { Button as SUI_Button, Icon as SUI_Icon } from 'semantic-ui-react';
 const Overtime_Form = props => {
   const { getFieldDecorator } = props.form;
 
-  const { handleSubmit, onFormClose } = props;
+  const { handleSubmit, closeForm, isLoading } = props;
 
   return (
+
     <Antd_Modal
       centered
       visible={props.formVisible}
       title="New Entry Form"
       okText="Submit"
-      onCancel={onFormClose}
+      onCancel={closeForm}
       onOk={handleSubmit}
       maskClosable={false}
     >
       <Antd_Spin
         tip="Submitting Entry"
-        spinning={props.isLoading}
+        spinning={isLoading}
         style={{ height: '100%' }}
       >
         <Antd_Form layout="vertical">
@@ -123,6 +124,7 @@ const Overtime_Form = props => {
         </Antd_Form>
       </Antd_Spin>
     </Antd_Modal>
+
   );
 };
 
