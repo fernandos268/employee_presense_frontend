@@ -1,3 +1,4 @@
+import React, { Component, createRef } from 'react';
 import {
   Button as Antd_Button,
   Divider as Antd_Divider,
@@ -9,11 +10,10 @@ import {
   Table as Antd_Table,
 } from 'antd';
 import moment from 'moment';
-import React, { Component, createRef } from 'react';
 
-// GraphQL
-import { compose, graphql } from 'react-apollo';
-
+import { connect } from 'react-redux';
+// redux
+import { bindActionCreators } from 'redux';
 // External Library Components Imports --------------------
 import {
   Grid as SUI_Grid,
@@ -21,23 +21,12 @@ import {
   Segment as SUI_Segment,
 } from 'semantic-ui-react';
 import {
-  createOvertimeMutation,
-  deleteOvertimeMutation,
-  updateOvertimeMutation,
-} from '../Graphql/mutations';
-import { fetchUserData } from '../Graphql/queries';
-
-// redux
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import {
-  requestCurrentUserOvertimes,
-  requestCreateOvertime,
   receiveCreatedOvertimeSuccess,
+  requestCreateOvertime,
+  requestCurrentUserOvertimes,
   requestDeleteOvertime,
-  requestUpdateOvertime
+  requestUpdateOvertime,
 } from '../../redux/actions';
-
 // Component Imports -------------------------------------
 import OvertimeForm from './OvertimeForm';
 import { MyApprovalColumns, MyTableColumns } from './OvertimeTableColumns';
@@ -60,18 +49,17 @@ class Overtime extends Component {
   }
 
   componentDidUpdate() {
-    console.log({ "this.props": this.props });
     if (this.props.data.ok) {
-      Antd_Message.success(`Entry has been successfully ${this.props.data.operation}`);
+      Antd_Message.success(
+        `Entry has been successfully ${this.props.data.operation}`
+      );
       this.props.receiveCreatedOvertimeSuccess();
       this.closeForm();
-      Antd_Modal.destroyAll()
+      Antd_Modal.destroyAll();
     }
     if (this.props.data.errors.length !== 0) {
       Antd_Message.error(errors.message);
     }
-
-
   }
 
   showForm = () => {
@@ -98,7 +86,7 @@ class Overtime extends Component {
       const calcDuration = moment.duration(end.diff(start));
       const duration = `${calcDuration._data.hours} Hr & ${
         calcDuration._data.minutes
-        } Min`;
+      } Min`;
 
       if (calcDuration._milliseconds > 0) {
         // return this.setState({ duration })
@@ -122,7 +110,7 @@ class Overtime extends Component {
 
   handleSubmit = () => {
     const form = this.formRef;
-    form.validateFields(async (err, fieldsValue) => {
+    form.validateFields((err, fieldsValue) => {
       if (!err) {
         const values = {
           ...fieldsValue,
@@ -137,8 +125,8 @@ class Overtime extends Component {
           description: values.description,
           status: 'Pending',
           approverId: values.approver,
-        }
-        this.props.requestCreateOvertime(variables)
+        };
+        this.props.requestCreateOvertime(variables);
       }
     });
   };
@@ -151,7 +139,7 @@ class Overtime extends Component {
       okType: 'danger',
       centered: true,
       onOk: () => {
-        this.props.requestDeleteOvertime(record._id)
+        this.props.requestDeleteOvertime(record._id);
       },
     });
   };
@@ -167,7 +155,7 @@ class Overtime extends Component {
         return this.props.requestUpdateOvertime({
           id: record._id,
           status: status,
-        })
+        });
       },
     });
   };
@@ -177,7 +165,6 @@ class Overtime extends Component {
   };
 
   render() {
-
     const { formVisible } = this.state;
     const { isLoading, operationLoading } = this.props.data;
     const { users } = this.props;
@@ -191,9 +178,8 @@ class Overtime extends Component {
       ApproverOptions = users.map(user => {
         const suffix = user.suffix || '';
         return (
-          <Antd_Select.Option key={user._id}>{`${user.firstName} ${
-            user.lastName
-            } ${suffix}`}
+          <Antd_Select.Option key={user._id}>
+            {`${user.firstName} ${user.lastName} ${suffix}`}
           </Antd_Select.Option>
         );
       });
@@ -287,17 +273,6 @@ class Overtime extends Component {
   }
 }
 
-// export default graphql(createOvertimeMutation, { name: 'createOvertimeMutation' })(Overtime);
-
-// export default compose(
-//   graphql(createOvertimeMutation, { name: 'createOvertimeMutation' }),
-//   graphql(deleteOvertimeMutation, { name: 'deleteOvertimeMutation' }),
-//   graphql(updateOvertimeMutation, { name: 'updateOvertimeMutation' }),
-//   graphql(fetchUserData, {
-//     options: props => ({ variables: { id: props.userId } }),
-//   })
-// )(Overtime);
-
 const mapStateToProps = state => ({ data: state.OvertimeReducer });
 
 const mapDispatchToProps = dispatch =>
@@ -307,7 +282,7 @@ const mapDispatchToProps = dispatch =>
       requestCreateOvertime,
       receiveCreatedOvertimeSuccess,
       requestDeleteOvertime,
-      requestUpdateOvertime
+      requestUpdateOvertime,
     },
     dispatch
   );

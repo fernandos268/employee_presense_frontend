@@ -1,36 +1,31 @@
 import React, { Component } from 'react';
+import { message as Antd_Message, Modal as Antd_Modal } from 'antd';
 
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+// Redux functions
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { requestAllUsers, requestCurrentUserData } from '../../redux/actions';
 
 // COMPONENT LIBRARY
 import {
-  Segment as SUI_Segment,
   Container as SUI_Container,
+  Segment as SUI_Segment,
 } from 'semantic-ui-react';
-import { message as Antd_Message, Modal as Antd_Modal } from 'antd';
-
-//APP COMPONENTS
-import AppHeader from './AppHeader';
-
-// CONTAINER COMPONENTS
-import Home from '../Home';
-import Overtime from '../Overtime';
-import DayOff from '../DayOff';
-
-// Authentication HOC
-import AuthWrapper from '../Auth/AuthWrapper';
 
 // Auth Reusable Functions
 import { isLoggedIn, removeToken } from '../Auth/Auth';
 
-// Fetch data from GraphQL API
-import { graphql, compose } from 'react-apollo';
-import { fetchUsers } from '../Graphql/queries';
+// AUTHENTICATION HOC
+import AuthWrapper from '../Auth/AuthWrapper';
+import DayOff from '../DayOff';
 
-// Redux functions
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { requestAllUsers } from '../../redux/actions';
+// CONTAINER COMPONENTS
+import Home from '../Home';
+import Overtime from '../Overtime';
+//APP COMPONENTS
+import AppHeader from './AppHeader';
 
 class App extends Component {
   constructor(props) {
@@ -65,13 +60,25 @@ class App extends Component {
     }
   };
 
-  componentWillMount() {
+  componentDidUpdate() {
+    console.log(this.props);
+    // if (this.props.data.errors.length !== 0) {
+    //   Antd_Message.error(this.props.data.errors);
+    // }
+  }
+
+  componentDidMount() {
+    const { userId } = this.props.tokenContent;
     this.props.requestAllUsers();
+    this.props.requestCurrentUserData(userId);
   }
 
   render() {
+    // console.log({ AppData: this.props.data });
     const { activeMenuItem } = this.state;
     const { username, userId } = this.props.tokenContent;
+
+    const { isLoading, userData } = this.props.data;
 
     const { users } = this.props.data.users || [];
     let usersList;
@@ -129,10 +136,10 @@ class App extends Component {
 // USING REACT-APOLLO PATTERN
 // const AppContainer = graphql(fetchUsers)(App);
 
-const mapStateToProps = state => ({ data:state.UsersReducer });
+const mapStateToProps = state => ({ data: state.UsersReducer });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestAllUsers}, dispatch);
+  bindActionCreators({ requestAllUsers, requestCurrentUserData }, dispatch);
 
 const AppContainer = connect(
   mapStateToProps,

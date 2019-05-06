@@ -8,18 +8,32 @@ import {
   receiveAllUsers,
   receiveCreateUserResponse,
   receiveApiRequestFailure,
+  receiveCurrentUserData,
   receiveSigninResponse,
 } from '../actions';
 
 // API REQUESTS
-import { fetchUsers, signupMutation, signinMutation } from '../../apiRequests';
+import {
+  fetchUsers,
+  signupMutation,
+  signinMutation,
+  fetchCurrentUserData,
+} from '../../apiRequests';
 
 // GET ALL USERS
 function* GetUsers() {
   try {
-    const data = yield call(fetchUsers);
-    yield put(receiveAllUsers(data));
+    const response = yield call(fetchUsers);
+    if (!response) {
+      return yield put(
+        receiveAllUsers({
+          errors: ['Something is wrong with the API request!'],
+        })
+      );
+    }
+    yield put(receiveAllUsers(response));
   } catch (e) {
+    yield put(receiveApiRequestFailure());
     throw e;
   }
 }
@@ -52,8 +66,23 @@ function* Signin(user) {
   }
 }
 
+// GET CURRENT USER OVERTIME & DAYOFF
+function* GetCurrentUserData(userId) {
+  try {
+    const response = yield call(fetchCurrentUserData, userId.data);
+    if (!response) {
+      return yield put(receiveApiRequestFailure());
+    }
+    yield put(receiveCurrentUserData(response));
+  } catch (e) {
+    yield put(receiveApiRequestFailure());
+    throw e;
+  }
+}
+
 export function* UsersSagaWatcher() {
   yield takeLatest(ActionTypes.REQUEST_ALL_USERS, GetUsers);
-  yield takeLatest(ActionTypes.REQUEST_CREATE_USER, CreateUser);
-  yield takeLatest(ActionTypes.REQUEST_SIGNIN, Signin);
+  yield takeEvery(ActionTypes.REQUEST_CREATE_USER, CreateUser);
+  yield takeEvery(ActionTypes.REQUEST_SIGNIN, Signin);
+  yield takeLatest(ActionTypes.REQUEST_CURRENT_USER_DATA, GetCurrentUserData);
 }

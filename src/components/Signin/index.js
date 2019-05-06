@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import {
   Alert as Antd_Alert,
   Card as Antd_Card,
@@ -5,13 +6,11 @@ import {
   Spin as Antd_Spin,
   Row as Antd_Row,
 } from 'antd';
-import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+
 import { withRouter } from 'react-router-dom';
 import { Grid as SUI_Grid, Segment as SUI_Segment } from 'semantic-ui-react';
 // Auth Functions
 import { isLoggedIn, setToken } from '../Auth/Auth';
-import { signinMutation } from '../Graphql/mutations';
 // Components
 import SigninForm from './SigninForm';
 import SigninHeader from './SigninHeader';
@@ -29,12 +28,9 @@ class Signin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirectToReferrer: false,
       errors: null,
       email: '',
       password: '',
-      isLoading: false,
-      age: 0,
     };
   }
 
@@ -66,8 +62,6 @@ class Signin extends Component {
       this.props.resetSigninErrors();
     }
   }
-
-  componentWillUnmount() {}
 
   render() {
     const { isLoading, errors } = this.props.data;

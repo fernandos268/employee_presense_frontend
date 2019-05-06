@@ -150,6 +150,7 @@ class DayOff extends Component {
           return Antd_Message.error(errors.message);
         }
         if (ok) {
+          Antd_Modal.destroyAll();
           return Antd_Message.success('Entry has been deleted');
         }
       },
@@ -178,6 +179,7 @@ class DayOff extends Component {
           return Antd_Message.error(errors.message);
         }
         if (ok) {
+          Antd_Modal.destroyAll();
           return Antd_Message.success(`Entry has been ${status}`);
         }
       },

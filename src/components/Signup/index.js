@@ -7,14 +7,9 @@ import {
   Steps as AntdSteps,
 } from 'antd';
 import React, { Component } from 'react';
-import { compose, graphql } from 'react-apollo';
 import { withRouter } from 'react-router-dom';
 import { Grid as SUI_Grid } from 'semantic-ui-react';
 import { isLoggedIn } from '../Auth/Auth';
-
-// GraphQL
-import { signupMutation } from '../Graphql/mutations';
-import { fetchUsers } from '../Graphql/queries';
 
 // Components
 import SignupHeader from './SignupHeader';

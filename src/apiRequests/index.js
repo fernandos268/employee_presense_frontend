@@ -242,11 +242,11 @@ export const createOvertimeMutation = async overtime => {
       },
     });
     const responseData = response.data.data.createOvertime;
-    return responseData
+    return responseData;
   } catch (e) {
     console.log(e);
   }
-}
+};
 
 // DELETE OVERTIME
 export const deleteOvertimeMutation = async overtimeId => {
@@ -284,15 +284,13 @@ export const deleteOvertimeMutation = async overtimeId => {
         variables: { id: overtimeId },
       },
     });
-    console.log({ deleteMutation: response })
+    console.log({ deleteMutation: response });
     const responseData = response.data.data.deleteOvertime.overtime;
-    return responseData
+    return responseData;
   } catch (e) {
     console.log(e);
   }
-}
-
-
+};
 
 // UPDATE OVERTIME
 export const updateOvertimeMutation = async overtime => {
@@ -336,11 +334,11 @@ export const updateOvertimeMutation = async overtime => {
       },
     });
     const responseData = response.data.data.updateOvertime;
-    return responseData
+    return responseData;
   } catch (e) {
     console.log(e);
   }
-}
+};
 
 //---------------------------------------------------------------------------------------------
 export const fetchCurrentUserDayoffs = async user => {
@@ -376,7 +374,7 @@ export const fetchCurrentUserDayoffs = async user => {
                 _id
                 startDate
                 endDate
-                description
+                description  console.log(userId);
                 duration
                 creator {
                   firstName
@@ -394,6 +392,67 @@ export const fetchCurrentUserDayoffs = async user => {
       },
     });
     return response.data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//---------------------------------------------------------------------------
+// GET ALL CURRENT USER'S OVERTIME & DAYOFF
+export const fetchCurrentUserData = async userId => {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: apiUrl,
+      headers: { authorization: `Bearer ${getToken()}` },
+      data: {
+        query: `
+            query fetchUser($id: ID!) {
+              fetchUser(userId: $id) {
+                ok
+                errors {
+                  path
+                  message
+                }
+                user {
+                  createdOvertimes {
+                    _id
+                    date
+                    startTime
+                    endTime
+                    duration
+                    description
+                    status
+                    approver {
+                      firstName
+                      lastName
+                      suffix
+                    }
+                  }
+                  createdDayOffs {
+                    _id
+                    startDate
+                    endDate
+                    description
+                    duration
+                    approver {
+                      firstName
+                      lastName
+                      suffix
+                    }
+                    status
+                  }
+                }
+              }
+            }
+        `,
+        variables: {
+          id: userId,
+        },
+      },
+    });
+    const responseData = response.data.data.fetchUser;
+    return responseData;
   } catch (e) {
     console.log(e);
   }

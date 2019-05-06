@@ -43,8 +43,6 @@ const dateCellRender = value => {
   );
 };
 
-// status={item.type}
-
 const getDatesBetween = (start, end, datesArray = []) => {
   if (start.isSameOrBefore(end)) {
     const isWeekday = start.day() === 0 || start.day() === 6;
@@ -57,55 +55,16 @@ const getDatesBetween = (start, end, datesArray = []) => {
 };
 
 const CalendarVIew = props => {
-  const { createdDayOffs, createdOvertimes, loading } = props;
+  const { createdDayOffs, createdOvertimes, isLoading } = props;
 
-  let dayOffItems;
-  if (!loading) {
-    dayOffItems = createdDayOffs.map(dayoff => {
-      let color = '';
-      switch (dayoff.status) {
-        case 'Pending':
-          color = 'blue';
-          break;
-        case 'Approved':
-          color = 'green';
-          break;
-        case 'Rejected':
-          color = 'red';
-          break;
-        default:
-          color = 'blue';
-      }
-
-      const startDate = moment(dayoff.startDate);
-      const endDate = moment(dayoff.endDate);
-
-      return {
-        inclusiveDates: getDatesBetween(moment(startDate, endDate)).map(
-          date => {
-            return {
-              date: date,
-              color,
-              content: 'Day Off',
-            };
-          }
-        ),
-      };
-    });
-  }
-
-  let calendarItems = [];
-  if (dayOffItems) {
-    calendarItems = Object.assign({}, ...dayOffItems);
-    // const calenarItems = dayOffItems.map(inclusiveDate => [...inclusiveDate]);
-    // getListData(calendarItems);
-  }
-
-  // console.log(
-  //   calendarItems.inclusiveDates.map(item => {
-  //     return item;
-  //   })
-  // );
+  const formattedOvertimes = createdOvertimes.map(overtime => {
+    return {
+      key: overtime._id,
+      date: moment(overtime.date),
+      status: overtime.status,
+      text: `${overtime.startTime} - ${overtime.endTime}`,
+    };
+  });
 
   return <Calendar dateCellRender={dateCellRender} />;
 };

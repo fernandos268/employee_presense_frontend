@@ -18,6 +18,16 @@ export const receiveAllUsers = data => ({
 export const requestUser = () => ({ type: ActionTypes.REQUEST_USER });
 export const receiveUser = data => ({ type: ActionTypes.RECEIVE_USER, data });
 
+// FETCH CURRENT USER'S OVERTIME & DAYOFF
+export const requestCurrentUserData = data => ({
+  type: ActionTypes.REQUEST_CURRENT_USER_DATA,
+  data,
+});
+export const receiveCurrentUserData = data => ({
+  type: ActionTypes.RECEIVE_CURRENT_USER_DATA,
+  data,
+});
+
 // CREATE USER
 export const requestCreateUser = data => ({
   type: ActionTypes.REQUEST_CREATE_USER,
@@ -93,7 +103,5 @@ export const receiveUpdateOvertimeResponse = data => ({
 export const receiveUpdateOvertimeSuccess = () => ({
   type: ActionTypes.RECEIVE_UPDATED_OVERTIME_SUCCESS,
 });
-
-
 
 // DAYOFF -------------------------------------------------------------

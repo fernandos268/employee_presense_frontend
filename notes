@@ -16,21 +16,23 @@ NOTE:
 
 1. Webpack
     --> a module bundler.
-    --> Bundling process: 
+    --> Bundling process:
         1. Entry: evaluates entry matches based on loader config
         2. Loaders: resolves against any file type such as (.JS / .JSX / .SVG / .PNG / etc..).
         3. Plugins: intercept runtime.
         4. Output: what the result file will be specified.
         3. devServer: to add development convenience configs.
 
+
 2. package.json
-    --> environment configuration file for app built on the Node ecosystem
+    --> environment configuration file for node apps
 
 
 3. caret symbol in package.json
     --> So if you see ~1.0.2 it means to install version 1.0.2 or the latest patch version such as 1.0.4. If you see ^1.0.2 it means to install version 1.0.2 or the latest minor or patch version such as 1.1.0
 
     https://bytearcher.com/articles/semver-explained-why-theres-a-caret-in-my-package-json/
+
 
 
 4. async & await
@@ -43,11 +45,12 @@ NOTE:
     --> Shallow: Copies the memory allocation of the copied object,
     --> Deep: Copies all the values of a object and gets it's own memory allocation.
 
+
 6. Key prop in mapped list:
     --> Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements inside the array to give the elements a stable identity:
 
 
-7. react lifecycle methids
+7. react lifecycle methods
     --> 1. GetdDefaultProps & GetInitialState - called in the pre-rendering phase.
         2. ComponentWillMount - Called before render() method is executed.
         3. ComponentDidMount - as soon as the render() method has been executed.
@@ -59,12 +62,11 @@ NOTE:
 
 
 8. redux
-    --> 
+    --> application state management
 
 
 *** create a module with the following requirements: ***
     ⭕ CRUD for Data
-    ⭕ Sort data
     ⭕ Arrow Functions (if applicable)
     ⭕ Spread operator
     ⭕ object destructuring
